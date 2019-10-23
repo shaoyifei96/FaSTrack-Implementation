@@ -84,7 +84,7 @@ classdef fastrack_LLC < low_level_controller
                 
                 display("overspeed!");%z_cur(4),U(2))
                 
-                U(2)= -sign(z_cur(4))*2;
+                U(2)= -sign(z_cur(4))*2; %2 is the max or min acc
             end
             
             

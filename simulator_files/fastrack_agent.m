@@ -95,8 +95,8 @@ classdef fastrack_agent < RTD_agent_2D
             % get nominal control inputs
            [u_s, normalizer] = A.LLC.get_control_inputs(A,t,z,T,U,Z);
             u_p = A.LLCP.get_control_inputs(A,t,z,T,U,Z);
-            u = (normalizer > 0.8) * u_s + (normalizer< 0.8)*(u_s * normalizer + u_p* (1-normalizer));
-             u = u_s;
+            %u = (normalizer > 0.8) * u_s + (normalizer< 0.8)*(u_s * normalizer + u_p* (1-normalizer));
+            u = u_s;
             u(isnan(u)) = 0 ; % safety check
             w_des = u(1) ;
             a_des = u(2) ;

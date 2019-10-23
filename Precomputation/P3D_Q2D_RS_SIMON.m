@@ -1,4 +1,4 @@
-function [data,tau,sD,TEB]=P3D_Q2D_RS(gN, visualize)
+function [data,tau,sD,TEB]=P3D_Q2D_RS_SIMON(gN, visualize)
 % 3D "plane" (dubins car) tracking 2D point mass
 
 % default to more grid points in x and y than in theta
