@@ -243,6 +243,8 @@ if visualize
     ylabel('$r_y$','interpreter','latex');
     
     subplot(2,3,3)
+    %%
+    
     h0 = visSetIm(g3D, sqrt(data03D), 'blue', levels(3)+small);
     h0.FaceAlpha = alpha;
     hold on
@@ -253,7 +255,7 @@ if visualize
     xlabel('$r_x$','interpreter','latex');
     ylabel('$r_y$','interpreter','latex');
     zlabel('$l$','interpreter','latex');
-    
+    %%
     subplot(2,3,6)
     h0 = visSetIm(g2D, sqrt(data02D), 'blue', levels(3)+small);
     hold on

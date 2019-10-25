@@ -46,7 +46,7 @@ classdef fastrack_LLC < low_level_controller
                 d_cur = dist_point_on_polyline(z_cur(A.position_indices),X_des) ;
 
                 % get distance along traj to interpolate
-                d_lookahead = 0.2 ; % per the comments
+                d_lookahead = LLC.TEB.TEB ; % per the comments
                 d_des = min(d_cur + d_lookahead, d_along_plan(end)) ;
 
                 % get desired state 0.49 m ahead on trajectory
@@ -82,7 +82,7 @@ classdef fastrack_LLC < low_level_controller
             U= [U{1};U{2}];
             if abs (z_cur(4))>1
                 
-                display("overspeed!");%z_cur(4),U(2))
+%                 display("overspeed!");%z_cur(4),U(2))
                 
                 U(2)= -sign(z_cur(4))*2; %2 is the max or min acc
             end

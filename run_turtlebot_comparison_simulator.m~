@@ -1,5 +1,3 @@
-clear all; close all
-clc;
 %% description
 % This script runs a simulation with the TurtleBot in the simulator
 % framework, using RRT* to plan online.
@@ -14,7 +12,7 @@ desired_speed = 1 ; % m/s
 % world
 obstacle_size_bounds = [0.2, 0.3] ; % side length [min, max]
 N_obstacles = 7;
-bounds = [-4,4,-2,2] ;
+bounds = [-4,4,8,8] ;
 goal_radius = 0.5 ;
 
 % planner limit
@@ -40,25 +38,23 @@ AB = fastrack_agent ;% tried both ode4 and ode 113, all don't work really well, 
 %
 
 % this is needed to the agent to track the RRT* output
-% A.LLC.yaw_gain = 10 ;
-% A.LLC.lookahead_time = 0.05 ;
+A.LLC.yaw_gain = 10 ;
+A.LLC.lookahead_time = 0.05 ;
 AB.LLCP.yaw_gain = 10 ;
 AB.LLCP.lookahead_time = 0.05 ;
 A_together = {A AB} ;
 
 
-buffer = AB.LLC.TEB.TEB + AB.footprint; % m. obs augmented by teb so if planning along the edge of augmented obs, 
+buffer = AB.LLC.TEB.TEB ; % m. obs augmented by teb so if planning along the edge of augmented obs, 
 %real agent doesn't hit actual obs despite traching error. SS 
 
 %RTD agent
-P1 = turtlebot_RTD_planner_static('verbose',verbose_level,'buffer',0.05,...
+P = turtlebot_RTD_planner_static('verbose',verbose_level,'buffer',0.05,...
                                  't_plan',t_plan,'t_move',t_move) ;
-%  P1 =turtlebot_RRT_star_planner('verbose',verbose_level,'buffer',0.05,...
-%     't_plan',t_plan,'t_move',t_move,'desired_speed',desired_speed) ;
+
 %fastrack
 P2 = turtlebot_RRT_star_planner('verbose',verbose_level,'buffer',buffer,...
     't_plan',t_plan,'t_move',t_move,'desired_speed',desired_speed) ;
-
 
 P_together = {P1 P2} ;
 
@@ -69,20 +65,7 @@ W = static_box_world('bounds',bounds,'N_obstacles',N_obstacles,...
                  
 
 S = simulator(A_together,W,P_together,'allow_replan_errors',true,'verbose',verbose_level,...
-              'max_sim_time',45,'max_sim_iterations',1000,'plot_while_running',1) ;
+              'max_sim_time',50,'max_sim_iterations',1000,'plot_while_running',1) ;
 
 %% run simulation
 S.run() ;
-for i = 1: 100
-    W = static_box_world('bounds',bounds,'N_obstacles',N_obstacles,...
-                     'verbose',verbose_level,'goal_radius',goal_radius,...
-                     'obstacle_size_bounds',obstacle_size_bounds) ;
-    S.worlds{1} = W;
-    try
-        S.run()
-    catch ME
-        continue;
-    end
-    summary = S.simulation_summary;
-    save("simulation_summary"+num2str(i),'summary')
-end
