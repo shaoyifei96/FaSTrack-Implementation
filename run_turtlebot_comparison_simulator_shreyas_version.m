@@ -13,7 +13,7 @@ desired_speed = 1 ; % m/s
 
 % world
 obstacle_size_bounds = [0.2, 0.3] ; % side length [min, max]
-N_obstacles = 7;
+N_obstacles = 10 ;
 bounds = [-4,4,-2,2] ;
 goal_radius = 0.5 ;
 
@@ -30,12 +30,12 @@ t_move = 0.5 ; %making these values big will make the controller not work for so
 
 % simulation
 sim_start_idx = 1 ;
-sim_end_idx = 500 ;
+sim_end_idx = 1 ;
 verbose_level = 5 ;
 plot_HLP_flag = true ;
 
 % file i/o
-save_summaries_flag = true ;
+save_summaries_flag = false ;
 save_file_location = '~/MATLAB/fastrack_comparison_data/' ;
 
 %% automated from here
@@ -54,46 +54,41 @@ A1.LLC.lookahead_time = 0.1 ;
 % put agents together
 A_together = {A1 A2} ;
 
-
 buffer = A2.LLC.TEB.TEB + A2.footprint; % m. obs augmented by teb so if planning along the edge of augmented obs, 
 %real agent doesn't hit actual obs despite traching error. SS 
 
 % RTD planner
 P1 = turtlebot_RTD_planner_static('verbose',verbose_level,'buffer',0.01,...
-                                 't_plan',t_plan,'t_move',t_move,'HLP',RRT_star_HLP(),...
+                                 't_plan',t_plan,'t_move',t_move,'HLP',RRT_HLP(),...
                                  'plot_HLP_flag',plot_HLP_flag) ;
 
 % fastrack planner
-P2 = turtlebot_RRT_star_planner('verbose',verbose_level,'buffer',buffer,...
+P2 = turtlebot_RRT_planner('verbose',verbose_level,'buffer',buffer,...
     't_plan',t_plan,'t_move',t_move,'desired_speed',desired_speed,...
     'plot_HLP_flag',plot_HLP_flag) ;
 
 
-P_together = {P1 P2} ;
-
-% S = simulator(A2,W,P2,'allow_replan_errors',true,'verbose',verbose_level,...
-%               'max_sim_time',45,'max_sim_iterations',1000,'plot_while_running',1) ;
-%           
-          
-%% run one simulation
-% S.run() ;
+% P_together = {P1 P2} ;
+A_together = A2 ;
+P_together = P2 ;
 
 %% run many simulations
 for idx = sim_start_idx:sim_end_idx
     W = static_box_world('bounds',bounds,'N_obstacles',N_obstacles,...
         'verbose',verbose_level,'goal_radius',goal_radius,...
         'obstacle_size_bounds',obstacle_size_bounds,...
-        'buffer',P2.buffer) ;
+        'buffer',buffer) ;
     
     S = simulator(A_together,W,P_together,'allow_replan_errors',true,'verbose',verbose_level,...
               'max_sim_time',30,'max_sim_iterations',1000,'plot_while_running',1) ;
     
     S.worlds{1} = W;
-    try
+%     try
         S.run()
-    catch ME
-        continue;
-    end
+%     catch ME
+%         disp('simulator errored!')
+%         continue;
+%     end
     summary = S.simulation_summary ;
     
     % generate filename
