@@ -22,16 +22,21 @@ goal_radius = 0.5 ;
 % get u to be with in 0.49m of the goal position. so to be connservative,
 % take a step of no further than 0.49 m everytime. SS
 % TEB = 0.49 m  
-t_plan = 0.5; % if t_plan = t_move, then real time planning is enforced
-t_move = 0.5; %making these values big will make the controller not work for some reason, there might be a bug
+t_plan = 0.5 ; % if t_plan = t_move, then real time planning is enforced
+t_move = 0.5 ; %making these values big will make the controller not work for some reason, there might be a bug
 %keeps reducing stepsize.  SS
 %works well when target is always 0.49 m away from current state, when they
 %are close(t_move is too long), numerical instability occur...  
 
 % simulation
-N_worlds_to_run = 1 ;
+sim_start_idx = 1 ;
+sim_end_idx = 500 ;
 verbose_level = 5 ;
-plot_HLP_flag = false ;
+plot_HLP_flag = true ;
+
+% file i/o
+save_summaries_flag = true ;
+save_file_location = '~/MATLAB/fastrack_comparison_data/' ;
 
 %% automated from here
 A1 =  turtlebot_agent;
@@ -54,7 +59,7 @@ buffer = A2.LLC.TEB.TEB + A2.footprint; % m. obs augmented by teb so if planning
 %real agent doesn't hit actual obs despite traching error. SS 
 
 % RTD planner
-P1 = turtlebot_RTD_planner_static('verbose',verbose_level,'buffer',0.05,...
+P1 = turtlebot_RTD_planner_static('verbose',verbose_level,'buffer',0.01,...
                                  't_plan',t_plan,'t_move',t_move,'HLP',RRT_star_HLP(),...
                                  'plot_HLP_flag',plot_HLP_flag) ;
 
@@ -66,28 +71,23 @@ P2 = turtlebot_RRT_star_planner('verbose',verbose_level,'buffer',buffer,...
 
 P_together = {P1 P2} ;
 
-W = static_box_world('bounds',bounds,'N_obstacles',N_obstacles,...
-                     'verbose',verbose_level,'goal_radius',goal_radius,...
-                     'obstacle_size_bounds',obstacle_size_bounds,...
-                     'buffer',P2.buffer) ;
-                 
-
-S = simulator(A_together,W,P_together,'allow_replan_errors',true,'verbose',verbose_level,...
-              'max_sim_time',45,'max_sim_iterations',1000,'plot_while_running',1) ;
-
-S = simulator(A2,W,P2,'allow_replan_errors',true,'verbose',verbose_level,...
-              'max_sim_time',45,'max_sim_iterations',1000,'plot_while_running',1) ;
-          
+% S = simulator(A2,W,P2,'allow_replan_errors',true,'verbose',verbose_level,...
+%               'max_sim_time',45,'max_sim_iterations',1000,'plot_while_running',1) ;
+%           
           
 %% run one simulation
 % S.run() ;
 
 %% run many simulations
-for idx = 1:N_worlds_to_run
+for idx = sim_start_idx:sim_end_idx
     W = static_box_world('bounds',bounds,'N_obstacles',N_obstacles,...
         'verbose',verbose_level,'goal_radius',goal_radius,...
         'obstacle_size_bounds',obstacle_size_bounds,...
         'buffer',P2.buffer) ;
+    
+    S = simulator(A_together,W,P_together,'allow_replan_errors',true,'verbose',verbose_level,...
+              'max_sim_time',30,'max_sim_iterations',1000,'plot_while_running',1) ;
+    
     S.worlds{1} = W;
     try
         S.run()
@@ -95,5 +95,11 @@ for idx = 1:N_worlds_to_run
         continue;
     end
     summary = S.simulation_summary ;
-    % save("simulation_summary"+num2str(idx),'summary')
+    
+    % generate filename
+    save_filename = [save_file_location,'trial_',num2str(idx,'%03.f')] ;
+    
+    if save_summaries_flag
+        save(save_filename,'summary')
+    end
 end
