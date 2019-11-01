@@ -54,7 +54,7 @@ A1.LLC.lookahead_time = 0.1 ;
 % put agents together
 A_together = {A1 A2} ;
 
-buffer = A2.LLC.TEB.TEB + A2.footprint; % m. obs augmented by teb so if planning along the edge of augmented obs, 
+buffer = A2.LLC.TEB.TEB + A2.footprint ; % m. obs augmented by teb so if planning along the edge of augmented obs, 
 %real agent doesn't hit actual obs despite traching error. SS 
 
 % RTD planner
@@ -95,6 +95,6 @@ for idx = sim_start_idx:sim_end_idx
     save_filename = [save_file_location,'trial_',num2str(idx,'%03.f')] ;
     
     if save_summaries_flag
-        save(save_filename,'summary')
+        save(save_filename,'summary','W')
     end
 end

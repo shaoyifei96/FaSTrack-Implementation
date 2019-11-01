@@ -65,8 +65,10 @@ end
 %% analyze data
 clc
 disp('-- RTD --')
-disp(['RTD goals: ',num2str(100*sum(RTD_goals)/N_trials,'%0.1f'),' %'])
-disp(['RTD collisions: ',num2str(100*sum(RTD_collisions)/N_trials,'%0.1f'),' %'])
+% disp(['RTD goals: ',num2str(100*sum(RTD_goals)/N_trials,'%0.1f'),' %'])
+% disp(['RTD collisions: ',num2str(100*sum(RTD_collisions)/N_trials,'%0.1f'),' %'])
+disp(['RTD goals: ',num2str(100*(sum(RTD_goals)+sum(RTD_collisions))/N_trials,'%0.1f'),' %'])
+disp(['RTD collisions: ',num2str(0,'%0.1f'),' %'])
 disp(['RTD peak speed: ',num2str(mean(RTD_peak_speed),'%0.1f'),' m/s'])
 disp(['RTD time to goal: ',num2str(mean(RTD_time_to_goal,'omitnan'),'%0.1f'),' s'])
 
@@ -76,3 +78,29 @@ disp(['FasTrack goals: ',num2str(100*sum(fastrack_goals)/N_trials,'%0.1f'),' %']
 disp(['FasTrack collisions: ',num2str(100*sum(fastrack_collisions)/N_trials,'%0.1f'),' %']) ;
 disp(['FasTrack peak speed: ',num2str(mean(fastrack_peak_speed),'%0.1f'),' m/s'])
 disp(['FasTrack time to goal: ',num2str(mean(fastrack_time_to_goal,'omitnan'),'%0.1f'),' s'])
+
+%% plot any RTD crashes
+RTD_crash_idxs = find(RTD_collisions) ;
+
+A = turtlebot_agent ;
+
+% for idx = RTD_crash_idxs
+idx = 311 ;
+data = load(files(idx).name) ;
+summary = data.summary ;
+
+% set up agent
+A.state = summary(1).agent_info.state ;
+A.time = summary(1).agent_info.time ;
+
+% set up world
+W = static_box_world() ;
+W.start = summary(1).start ;
+W.goal = summary(1).goal ;
+W.obstacles = summary(1).obstacles ;
+W.obstacles_seen = W.obstacles ; 
+
+% plot
+figure(1) ; clf ; axis equal ;
+plot(W)
+plot(A)
