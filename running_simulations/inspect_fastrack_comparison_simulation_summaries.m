@@ -4,54 +4,42 @@
 %
 % Author: Shreyas Kousik%
 % Created: 30 Oct 2019
-% Updated: 31 Oct 2019
+% Updated: 1 Nov 2019
 %
 %% user parameters
-save_file_location = '~/MATLAB/fastrack_comparison_data/' ;
+save_file_location = '~/MATLAB/fastrack_comparison_data/round_1/' ;
 
 %% automated from here
 files = dir(save_file_location) ;
 
 N_trials = 0 ;
 
-RTD_goals = [] ;
-RTD_collisions = [] ;
-RTD_peak_speed = [] ;
-RTD_time_to_goal = [] ;
-
-fastrack_goals = [] ;
-fastrack_collisions = [] ;
-fastrack_peak_speed = [] ;
-fastrack_time_to_goal = [] ;
+goals = [] ;
+collisions = [] ;
+peak_speed = [] ;
+time_to_goal = [] ;
 
 %% load and extract data
-for idx = 3:length(files)
-    n = files(idx).name ;
-    if length(n) > 3 && strcmpi(n(end-2:end),'mat')
-        data = load(files(idx).name) ;
+for file_idx = 3:length(files)
+    file_name = files(file_idx).name ;
+    if length(file_name) > 3 && strcmpi(file_name(end-2:end),'mat')
+        data = load(files(file_idx).name) ;
         summary = data.summary ;
         
-        % get RTD data
-        RTD_goal = summary(1).goal_check ;
-        RTD_goals = [RTD_goals, RTD_goal] ;
-        RTD_collisions = [RTD_collisions, summary(1).collision_check] ;
-        if RTD_goal
-            RTD_time_to_goal = [RTD_time_to_goal, summary(1).total_simulated_time(end)] ;
-        else
-            RTD_time_to_goal = [RTD_time_to_goal, nan] ;
-        end
-        RTD_peak_speed = [RTD_peak_speed, max(summary(1).agent_info.state(4,:))] ;
+        % add a column to the data
+        n_planners = length(summary) ;
+        goals = [goals, nan(n_planners,1)];
+        collisions = [collisions, nan(n_planners,1)] ;
+        peak_speed = [peak_speed, nan(n_planners,1)] ;
+        time_to_goal = [time_to_goal, nan(n_planners,1)] ;
         
-        % get fastrack data
-        fastrack_goal = summary(2).goal_check ;
-        fastrack_goals = [fastrack_goals, fastrack_goal] ;
-        fastrack_collisions = [fastrack_collisions, summary(2).collision_check] ;
-        if fastrack_goal
-            fastrack_time_to_goal = [fastrack_time_to_goal, summary(2).total_simulated_time(end)] ;
-        else
-            fastrack_time_to_goal = [fastrack_time_to_goal, nan] ;
+        % get the data
+        for idx = 1:n_planners
+            goals(idx,end) = summary(idx).goal_check ;
+            collisions(idx,end) = summary(idx).collision_check ;
+            peak_speed(idx,end) = max(summary(idx).trajectory(4,:)) ;
+            time_to_goal(idx,end) = summary(idx).total_simulated_time(end) ;
         end
-        fastrack_peak_speed = [fastrack_peak_speed, max(summary(2).agent_info.state(4,:))] ;
         
         % increment
         N_trials = N_trials + 1 ;
@@ -64,29 +52,24 @@ end
 
 %% analyze data
 clc
-disp('-- RTD --')
-% disp(['RTD goals: ',num2str(100*sum(RTD_goals)/N_trials,'%0.1f'),' %'])
-% disp(['RTD collisions: ',num2str(100*sum(RTD_collisions)/N_trials,'%0.1f'),' %'])
-disp(['RTD goals: ',num2str(100*(sum(RTD_goals)+sum(RTD_collisions))/N_trials,'%0.1f'),' %'])
-disp(['RTD collisions: ',num2str(0,'%0.1f'),' %'])
-disp(['RTD peak speed: ',num2str(mean(RTD_peak_speed),'%0.1f'),' m/s'])
-disp(['RTD time to goal: ',num2str(mean(RTD_time_to_goal,'omitnan'),'%0.1f'),' s'])
 
-disp(' ')
-disp('-- FasTrack --')
-disp(['FasTrack goals: ',num2str(100*sum(fastrack_goals)/N_trials,'%0.1f'),' %']) ;
-disp(['FasTrack collisions: ',num2str(100*sum(fastrack_collisions)/N_trials,'%0.1f'),' %']) ;
-disp(['FasTrack peak speed: ',num2str(mean(fastrack_peak_speed),'%0.1f'),' m/s'])
-disp(['FasTrack time to goal: ',num2str(mean(fastrack_time_to_goal,'omitnan'),'%0.1f'),' s'])
+for idx = 1:n_planners
+    disp(summary(idx).planner_name)
+    disp(['Goals: ',num2str(100*sum(goals(idx,:))/N_trials,'%0.1f'),' %'])
+    disp(['Collisions: ',num2str(100*sum(collisions(idx,:))/N_trials,'%0.1f'),' %'])
+    disp(['Peak Speed: ',num2str(mean(peak_speed(idx,:)),'%0.1f'),' m/s'])
+    disp(['Time to Goal: ',num2str(mean(time_to_goal(idx,:),'omitnan'),'%0.1f'),' s'])
+    disp(' ')
+end
 
 %% plot any RTD crashes
-RTD_crash_idxs = find(RTD_collisions) ;
+RTD_crash_idxs = find(collisions) ;
 
 A = turtlebot_agent ;
 
 % for idx = RTD_crash_idxs
-idx = 311 ;
-data = load(files(idx).name) ;
+file_idx = 311 ;
+data = load(files(file_idx).name) ;
 summary = data.summary ;
 
 % set up agent
