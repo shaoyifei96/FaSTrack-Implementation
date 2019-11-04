@@ -4,7 +4,7 @@
 %
 % Author: Shreyas Kousik
 % Created: 31 Oct 2019
-% Updated: 1 Nov 2019
+% Updated: 4 Nov 2019
 %
 %% user parameters
 % agent
@@ -20,7 +20,7 @@ goal_radius = 0.5 ;
 box_size = 0.25 ;
 
 % planner time limits
-grow_tree_mode = 'once' ; % pick 'once' or 'iter'
+initialize_tree_mode = 'once' ; % pick 'once' or 'iter'
 t_plan = 0.5 ;
 t_move = 0.5 ;
 
@@ -54,7 +54,7 @@ for idx = 3:length(files)
         P = turtlebot_RRT_planner('verbose',verbose_level,'buffer',fastrack_buffer,...
             't_plan',t_plan,'t_move',t_move,'desired_speed',desired_speed,...
             'plot_HLP_flag',plot_HLP_flag,...
-            'grow_tree_mode',grow_tree_mode) ;
+            'initialize_tree_mode',initialize_tree_mode) ;
         
         % make a world
         try
