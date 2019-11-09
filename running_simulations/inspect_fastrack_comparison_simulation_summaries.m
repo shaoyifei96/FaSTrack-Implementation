@@ -7,7 +7,7 @@
 % Updated: 31 Oct 2019
 %
 %% user parameters
-save_file_location = '~/MATLAB/fastrack_comparison_data/' ;
+save_file_location = './result' ;
 
 %% automated from here
 files = dir(save_file_location) ;
@@ -25,7 +25,7 @@ fastrack_peak_speed = [] ;
 fastrack_time_to_goal = [] ;
 
 %% load and extract data
-for idx = 3:length(files)
+for idx = 1:length(files)
     n = files(idx).name ;
     if length(n) > 3 && strcmpi(n(end-2:end),'mat')
         data = load(files(idx).name) ;

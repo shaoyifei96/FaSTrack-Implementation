@@ -39,7 +39,7 @@ if visualize
     clf
     subplot(1,2,1)
     % project down to 2D so we can see the value function
-    [g2D, data02D] = proj(sD.grid,data0,[0 0 1 1],'min');
+    [g2D, data02D] = proj(sD.grid,data0,[0 0 1 1],'max');
     
     
     color = 'b'; % color
@@ -136,7 +136,7 @@ tau = 0:dt:tMax;
 extraArgs.stopConverge = true;
 
 % convergence threshold
-extraArgs.convergeThreshold = dt;
+extraArgs.convergeThreshold = 0.01;
 
 % only keep the most recently computed data
 extraArgs.keepLast = 1;
@@ -162,7 +162,7 @@ if visualize
     figure(1)
     hold on
     subplot(1,2,2)
-    [g2D, data2D] = proj(sD.grid, data, [0 0 1 1 ], 'min');
+    [g2D, data2D] = proj(sD.grid, data, [0 0 1 1 ], 'max');
     
 
     % visualize sqrt of value function
@@ -180,13 +180,13 @@ if visualize
     ylabel('$r_y$','interpreter','latex');
     zlabel('$V$','interpreter','latex');
     title('Converged Value function $V(x)$','interpreter','latex');
-    
+    %%
     
     alpha = .2;
     levels = [TEB, TEB+.5, TEB+1];
     
-    [g3D, data3D] = proj(sD.grid,data,[0 0 1 0],'min');
-    [~, data03D] = proj(sD.grid,data0,[0 0 1 0],'min');
+    [g3D, data3D] = proj(sD.grid,data,[0 0 0 1],'max');
+    [~, data03D] = proj(sD.grid,data0,[0 0 0 1],'max');
     [g2D, data2D] = proj(sD.grid,data,[0 0 1 1]);%'max');
     % Plot some levels of the value function
     

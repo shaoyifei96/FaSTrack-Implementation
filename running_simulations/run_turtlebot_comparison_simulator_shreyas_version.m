@@ -14,7 +14,7 @@ desired_speed = 1 ; % m/s
 % world
 obstacle_size_bounds = [0.2, 0.3] ; % side length [min, max]
 N_obstacles = 10 ;
-bounds = [-4,4,-2,2] ;
+bounds = [-10,10,-6,6] ;
 goal_radius = 0.5 ;
 
 % planner limit
@@ -30,13 +30,13 @@ t_move = 0.5 ; %making these values big will make the controller not work for so
 
 % simulation
 sim_start_idx = 1 ;
-sim_end_idx = 1 ;
-verbose_level = 5 ;
+sim_end_idx = 400;
+verbose_level = 0 ;
 plot_HLP_flag = true ;
 
 % file i/o
-save_summaries_flag = false ;
-save_file_location = '~/MATLAB/fastrack_comparison_data/' ;
+save_summaries_flag = true ;
+save_file_location = './' ;
 
 %% automated from here
 A1 =  turtlebot_agent;
@@ -54,7 +54,7 @@ A1.LLC.lookahead_time = 0.1 ;
 % put agents together
 A_together = {A1 A2} ;
 
-buffer = A2.LLC.TEB.TEB + A2.footprint ; % m. obs augmented by teb so if planning along the edge of augmented obs, 
+buffer = 2.1 + A2.footprint ; % m. obs augmented by teb so if planning along the edge of augmented obs, 
 %real agent doesn't hit actual obs despite traching error. SS 
 
 % RTD planner
@@ -68,7 +68,7 @@ P2 = turtlebot_RRT_planner('verbose',verbose_level,'buffer',buffer,...
     'plot_HLP_flag',plot_HLP_flag) ;
 
 
-% P_together = {P1 P2} ;
+ P_together = {P1 P2} ;
 A_together = A2 ;
 P_together = P2 ;
 
@@ -80,7 +80,7 @@ for idx = sim_start_idx:sim_end_idx
         'buffer',buffer) ;
     
     S = simulator(A_together,W,P_together,'allow_replan_errors',true,'verbose',verbose_level,...
-              'max_sim_time',30,'max_sim_iterations',1000,'plot_while_running',1) ;
+              'max_sim_time',90,'max_sim_iterations',1000,'plot_while_running',1) ;
     
     S.worlds{1} = W;
 %     try
