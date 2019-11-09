@@ -6,7 +6,7 @@ classdef fastrack_LLC < low_level_controller
         accel_gain = 0 ;
         yaw_gain = 0 ;
         yaw_rate_gain = 1 ; %not useful constants for fastrack
-        TEB = load("Dubin4D30_dt010_tMax_converge.mat");
+        TEB = load("Dubin4Dlimit_spd_2_converge.mat");
         Q = [1 0; 0 1; 0 0; 0 0];
         
         
@@ -47,7 +47,7 @@ classdef fastrack_LLC < low_level_controller
                     d_cur = dist_point_on_polyline(z_cur(A.position_indices),X_des) ;
 
                     % get distance along traj to interpolate
-                    d_lookahead = LLC.TEB.TEB ; % per the comments
+                    d_lookahead = 0.6 ; % per the comments
                     d_des = min(d_cur + d_lookahead, d_along_plan(end)) ;
 
                     % get desired state 0.49 m ahead on trajectory
@@ -57,12 +57,12 @@ classdef fastrack_LLC < low_level_controller
                 end
             end
             
-             %z_des=[-1.2;0];
+%              z_des=[1;-1];
              z_des=LLC.Q*[z_des(1); z_des(2)];
              
              rel_z = z_cur - z_des;% find relative state SS
              %rel_z=[0.5;0.1;0;0];
-             normalizer = sqrt((rel_z(1)^2+rel_z(2)^2))/ LLC.TEB.TEB; %make sure relative state doesn't exceed
+             normalizer = sqrt((rel_z(1)^2+rel_z(2)^2))/ LLC.TEB.TEB %make sure relative state doesn't exceed
              %teb, since we are choosing the next planned state, it can be
              %arbitarily close to the previous one to ensure our teb lookup
              %table doesn't go out of bound. SS
@@ -84,12 +84,12 @@ classdef fastrack_LLC < low_level_controller
              % controller tries to minimize the rel err, only
              U = LLC.TEB.sD.dynSys.optCtrl([],rel_z,deriv_Intropolated,uMode);
              U= [U{1};U{2}];
-             if abs (z_cur(4))>1
-                 
-                 %                 display("overspeed!");%z_cur(4),U(2))
-                
-                U(2)= -sign(z_cur(4))*2; %2 is the max or min acc
-            end
+%              if abs (z_cur(4))>1
+%                  
+%                  %                 display("overspeed!");%z_cur(4),U(2))
+%                 
+%                 U(2)= -sign(z_cur(4))*2; %2 is the max or min acc
+%             end
             
             
 %             rel_z
