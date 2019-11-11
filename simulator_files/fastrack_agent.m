@@ -4,8 +4,8 @@ classdef fastrack_agent < RTD_agent_2D
 % T
     
     properties
-        integrator_type = 'ode45' ; 
-        integrator_time_discretization = 0.01 ; % for ode4
+        integrator_type = 'ode4' ; 
+        integrator_time_discretization = 0.1 ; % for ode4
         % state limits
         max_speed = 2 ; % m/s (NOTE this is higher than in the specs, since
                         % the planner should not command speeds above its
@@ -86,8 +86,8 @@ classdef fastrack_agent < RTD_agent_2D
             
             % get nominal control inputs
            [u_s, normalizer] = A.LLC.get_control_inputs(A,t,z,T,U,Z);
-            u_p = A.LLCP.get_control_inputs(A,t,z,T,U,Z);
-            %u = (normalizer > 0.8) * u_s + (normalizer< 0.8)*(u_s * normalizer + u_p* (1-normalizer));
+%             u_p = A.LLCP.get_control_inputs(A,t,z,T,U,Z);
+%             u = (normalizer > 0.8) * u_s + (normalizer< 0.8)*(u_s * normalizer + u_p* (1-normalizer));
             u = u_s;
             u(isnan(u)) = 0 ; % safety check
             w_des = u(1) ;

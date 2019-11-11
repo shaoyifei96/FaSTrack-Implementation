@@ -43,12 +43,14 @@ classdef fastrack_LLC < low_level_controller
                 d_along_plan = dist_polyline_cumulative(X_des) ;
 
                 if d_along_plan(end) > 0
-                    % get closest point to current agent location
-                    d_cur = dist_point_on_polyline(z_cur(A.position_indices),X_des) ;
-
-                    % get distance along traj to interpolate
-                    d_lookahead = 0.6 ; % per the comments
-                    d_des = min(d_cur + d_lookahead, d_along_plan(end)) ;
+%                     % get closest point to current agent location
+%                     d_cur = dist_point_on_polyline(z_cur(A.position_indices),X_des) ;
+% 
+%                     % get distance along traj to interpolate
+%                     d_lookahead = 0.6 ; % per the comments
+%                     d_des = min(d_cur + d_lookahead, d_along_plan(end)) ;
+ 
+                    d_des = 0.28 * 0.1 ;
 
                     % get desired state 0.49 m ahead on trajectory
                     z_des = match_trajectories(d_des,d_along_plan,Z_des) ;
