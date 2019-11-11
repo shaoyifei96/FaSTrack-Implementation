@@ -14,7 +14,7 @@ end
 
 % default to visualizing
 if nargin < 2
-    visualize = 1;
+    visualize = 0;
 end
 
 %% Grid and cost
@@ -90,7 +90,7 @@ sD.uMode = 'min';
 sD.dMode = 'max';
 
 % how carefully are we measuring gradients?
-sD.accuracy = 'low';
+sD.accuracy = 'veryHigh';
 
 
 % set up what we want to visualize while computing this
@@ -269,14 +269,15 @@ if visualize
     
     set(gcf,'Color','white')
     %%
-    deriv = computeGradients(sD.grid,data);
 %save
 %%
 planner_data.p1_limit  = p1_limit;
 planner_data.p2_limit = p2_limit;
-save(['Dubin4D' num2str(gN(1)) '_dt0' num2str(dt*100) '_tMax_converge.mat'], 'TEB','sD', 'data','deriv','planner_data','-v7.3');
     %%
 end
+deriv = computeGradients(sD.grid,data);
+
+save(['Dubin4D' num2str(gN(1)) '_dt0' num2str(dt*100) '_tMax_converge.mat'], 'TEB','sD', 'data','deriv','planner_data','-v7.3');
 
 end
 
