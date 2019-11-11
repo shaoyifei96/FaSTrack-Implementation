@@ -36,27 +36,29 @@ classdef fastrack_LLC < low_level_controller
                 v_des = 0 ;
                 h_des = h_cur ;
             else
-                %                 % otherwise, we are doing feedback about a desired
-                %                 % trajectory
-                %                % get distances along planned trajectory
-                %                 X_des = Z_des(1:2,:) ;
-                %                 d_along_plan = dist_polyline_cumulative(X_des) ;
-                %
-                %                 if d_along_plan(end) > 0
-                %                     % get closest point to current agent location
-                %                     d_cur = dist_point_on_polyline(z_cur(A.position_indices),X_des) ;
-                %
-                %                     % get distance along traj to interpolate
-                %                     % d_lookahead = LLC.TEB.TEB ; % per the comments
-                %                     d_lookahead = sqrt(2*(0.2^2)) ;
-                %                     d_des = min(d_cur + d_lookahead, d_along_plan(end)) ;
-                %
-                %                     % get desired state 0.49 m ahead on trajectory
-                %                     z_des = match_trajectories(d_des,d_along_plan,Z_des) ;
-                %                 else
-                %                     z_des = Z_des(:,end) ;
-                %                 end
-                z_des = match_trajectories(t_cur,T_des,Z_des) ;
+                % otherwise, we are doing feedback about a desired
+                % trajectory
+                
+                % get distances along planned trajectory
+                X_des = Z_des(1:2,:) ;
+                d_along_plan = dist_polyline_cumulative(X_des) ;
+                
+                if d_along_plan(end) > 0
+%                     % get closest point to current agent location
+%                     d_cur = dist_point_on_polyline(z_cur(A.position_indices),X_des) ;
+%                     
+%                     % get distance along traj to interpolate
+%                     % d_lookahead = LLC.TEB.TEB ; % per the comments
+%                     d_lookahead = sqrt(2*(0.2^2)) ;
+%                     d_des = min(d_cur + d_lookahead, d_along_plan(end)) ;
+                    d_des = 0.28 * 0.1 ; % dt = 0.1 ;
+                    
+                    % get desired state along path plan
+                    z_des = match_trajectories(d_des,d_along_plan,Z_des) ;
+                else
+                    z_des = Z_des(:,end) ;
+                end
+                % z_des = match_trajectories(t_cur,T_des,Z_des) ;
             end
             
             %z_des=[-1.2;0];
