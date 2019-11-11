@@ -50,10 +50,11 @@ classdef fastrack_LLC < low_level_controller
 %                     d_lookahead = 0.6 ; % per the comments
 %                     d_des = min(d_cur + d_lookahead, d_along_plan(end)) ;
  
-                    d_des = 0.28 * 0.1 ;
-
-                    % get desired state 0.49 m ahead on trajectory
-                    z_des = match_trajectories(d_des,d_along_plan,Z_des) ;
+%                     d_des = 0.28 * 0.1 ;
+% 
+%                     % get desired state 0.49 m ahead on trajectory
+%                     z_des = match_trajectories(d_des,d_along_plan,Z_des) 
+                    z_des = match_trajectories(t_cur + 0.1, T_des, Z_des) ;
                 else
                     z_des = Z_des(:,end) ;
                 end
@@ -68,11 +69,11 @@ classdef fastrack_LLC < low_level_controller
              %teb, since we are choosing the next planned state, it can be
              %arbitarily close to the previous one to ensure our teb lookup
              %table doesn't go out of bound. SS
-             if normalizer > 1
-                 % Don't know if this intropolation is valid....
-                 rel_z(1) = rel_z(1)/normalizer;
-                 rel_z(2) = rel_z(2)/normalizer;
-             end
+%              if normalizer > 1
+%                  % Don't know if this intropolation is valid....
+%                  rel_z(1) = rel_z(1)/normalizer;
+%                  rel_z(2) = rel_z(2)/normalizer;
+%              end
              %            [gOut, dataOut] = proj(LLC.TEB.sD.grid, LLC.TEB.data, [1 1 1 0], [rel_z(1) rel_z(2) rel_z(3)]);
              %            figure(2)
              %            plot(dataOut)
