@@ -89,7 +89,7 @@ classdef fastrack_agent < RTD_agent_2D
             u_p = A.LLCP.get_control_inputs(A,t,z,T,U,Z);
             u = (normalizer > 0.8) * u_s + (normalizer< 0.8)*(u_s * normalizer + u_p* (1-normalizer));
             
-            % u = u_s ; % uncomment for safety only
+            u = u_s ; % uncomment for safety only
             
             % u = u_p ; % uncomment for performance only
             
