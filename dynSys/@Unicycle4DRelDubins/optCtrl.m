@@ -1,5 +1,4 @@
 function uOpt = optCtrl(obj, ~, x, deriv, uMode, ~)
-obj.max_spd 
 % uOpt = optCtrl(obj, t, x, deriv, uMode, dMode, MIEdims)
 
 % Note: dynamics specified in dynamics.m
