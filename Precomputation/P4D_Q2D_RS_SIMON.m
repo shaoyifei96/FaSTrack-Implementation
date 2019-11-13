@@ -9,7 +9,7 @@ p2_limit = 0.2;
 % if nargin < 1
     % number of grid points (more grid points --> better results, but
     % slower computation)
-    gN = ones(4, 1)*30;
+    gN = ones(4, 1)*100;
 % end
 
 % default to visualizing
@@ -22,8 +22,8 @@ p2_limit = 0.2;
 
 % grid bounds in x, y, theta (relative dynamics)
 
-gMin = [-1.5; -1.5; -pi;  -1.5; ];
-gMax = [1.5; 1.5 ;  pi;  1.5; ];
+gMin = [-1.2; -1.2; -pi;  -1.8; ];
+gMax = [1.2; 1.2 ;  pi;  1.8; ];
 
 % create grid with 3rd dimension periodic
 sD.grid = createGrid(gMin, gMax, gN,3);
