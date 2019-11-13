@@ -16,13 +16,14 @@ p2_limit = 0.2;
 % if nargin < 2
     visualize = 0;
 
+   max_spd = 1.5;
 
 %% Grid and cost
 
 % grid bounds in x, y, theta (relative dynamics)
 
-gMin = [-1.5; -1.5; -pi;  -1; ];
-gMax = [1.5 ; 1.5 ;  pi;  1; ];
+gMin = [-1.5; -1.5; -pi;  -1.55; ];
+gMax = [1.5; 1.5 ;  pi;  1.55; ];
 
 % create grid with 3rd dimension periodic
 sD.grid = createGrid(gMin, gMax, gN,3);
@@ -80,7 +81,7 @@ end
 
 % create relative dynamics
 %P3D_Q2D_Rel(x, uMin, uMax, pMin, pMax, dMin, dMax, v, dims)
-sD.dynSys = Unicycle4DRelDubins([0, 0, 0,0],acc_max, w_max, p1_limit, p2_limit);
+sD.dynSys = Unicycle4DRelDubins([0, 0, 0,0],acc_max, w_max, p1_limit, p2_limit,max_spd);
 
 %% Otherparameters
 
@@ -278,7 +279,7 @@ planner_data.p1_limit  = p1_limit;
 planner_data.p2_limit = p2_limit;
 deriv = computeGradients(sD.grid,data);
 
-save(['Dubin4D1mpers_tMax_converge.mat'], 'TEB','sD', 'data','deriv','planner_data','-v7.3');
+save(['Dubin4D1point5mpers_tMax_converge.mat'], 'TEB','sD', 'data','deriv','planner_data','-v7.3');
 
 
 %%h0 = visSetIm(g3D, sqrt(data03D), 'blue', levels(1)+small);

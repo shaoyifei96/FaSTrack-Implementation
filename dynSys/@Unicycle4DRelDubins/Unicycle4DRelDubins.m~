@@ -43,7 +43,7 @@ classdef Unicycle4DRelDubins < DynSys
 
       obj.p1_lim = p1_lim
       obj.p2_lim = p2_lim
-      obj.max_spd = max_spd
+      obj.max_spd =
 
       obj.pdim = [1,2];% position dimensions
       obj.hdim = [3];% heading dimensions
