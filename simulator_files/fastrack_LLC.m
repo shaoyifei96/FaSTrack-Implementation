@@ -6,8 +6,9 @@ classdef fastrack_LLC < low_level_controller
         accel_gain = 0 ;
         yaw_gain = 0 ;
         yaw_rate_gain = 1 ; %not useful constants for fastrack
-        TEB = load("Dubin4Dlimit_spd_2_converge.mat");
+        TEB = load("Dubin4D1mpers_veryHigh.mat");
         Q = [1 0; 0 1; 0 0; 0 0];
+        TEBadj = 0.35;
         
         
     end
@@ -59,13 +60,12 @@ classdef fastrack_LLC < low_level_controller
                     z_des = Z_des(:,end) ;
                 end
             end
-            
 %              z_des=[1;-1];
              z_des=LLC.Q*[z_des(1); z_des(2)];
              
              rel_z = z_cur - z_des;% find relative state SS
              %rel_z=[0.5;0.1;0;0];
-             normalizer = sqrt((rel_z(1)^2+rel_z(2)^2))/ LLC.TEB.TEB %make sure relative state doesn't exceed
+             normalizer = sqrt((rel_z(1)^2+rel_z(2)^2))/ LLC.TEBadj %make sure relative state doesn't exceed
              %teb, since we are choosing the next planned state, it can be
              %arbitarily close to the previous one to ensure our teb lookup
              %table doesn't go out of bound. SS
