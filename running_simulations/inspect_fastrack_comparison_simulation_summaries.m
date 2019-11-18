@@ -7,7 +7,7 @@
 % Updated: 1 Nov 2019
 %
 %% user parameters
-save_file_location = '~/MATLAB/fastrack_comparison_data/round_1/' ;
+save_file_location = './result' ;
 
 %% automated from here
 files = dir(save_file_location) ;
@@ -22,8 +22,10 @@ time_to_goal = [] ;
 %% load and extract data
 for file_idx = 3:length(files)
     file_name = files(file_idx).name ;
+
     if length(file_name) > 3 && strcmpi(file_name(end-2:end),'mat')
         data = load(files(file_idx).name) ;
+
         summary = data.summary ;
         
         % add a column to the data

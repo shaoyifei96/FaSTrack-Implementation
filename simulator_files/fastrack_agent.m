@@ -19,6 +19,7 @@ classdef fastrack_agent < RTD_agent_2D
         max_yaw_rate = 2.0 ; % rad/s     
         max_accel = 2.0 ; % m/s^2   
         LLCP
+        TEB_max = 0;
     end
     
     methods
@@ -29,7 +30,7 @@ classdef fastrack_agent < RTD_agent_2D
             n_states = 4 ;
             n_inputs = 2 ;
             stopping_time = 1 ;
-            sensor_radius = 3 ;
+            sensor_radius = 1000 ;
             LLC =  fastrack_LLC;
             LLCP = turtlebot_PD_LLC ;
             
@@ -83,10 +84,18 @@ classdef fastrack_agent < RTD_agent_2D
             v = z(A.speed_index) ;
             
             % get nominal control inputs
-           [u_s, normalizer] = A.LLC.get_control_inputs(A,t,z,T,U,Z);
-%             u_p = A.LLCP.get_control_inputs(A,t,z,T,U,Z);
-%             u = (normalizer > 0.8) * u_s + (normalizer< 0.8)*(u_s * normalizer + u_p* (1-normalizer));
-            u = u_s;
+           [u_s, TEB_exp] = A.LLC.get_control_inputs(A,t,z,T,U,Z);
+           if (TEB_exp) > A.TEB_max
+                A.TEB_max = TEB_exp;
+           end
+           
+           % u_p = A.LLCP.get_control_inputs(A,t,z,T,U,Z);
+            %u = (normalizer > 0.8) * u_s + (normalizer< 0.8)*(u_s * normalizer + u_p* (1-normalizer));
+            
+            u = u_s ; % uncomment for safety only
+            
+            % u = u_p ; % uncomment for performance only
+
             u(isnan(u)) = 0 ; % safety check
             w_des = u(1) ;
             a_des = u(2) ;

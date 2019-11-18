@@ -22,8 +22,8 @@ goal_radius = 0.5 ;
 % get u to be with in 0.49m of the goal position. so to be connservative,
 % take a step of no further than 0.49 m everytime. SS
 % TEB = 0.49 m  
-t_plan = 0.5 ; % if t_plan = t_move, then real time planning is enforced
-t_move = 0.5 ; %making these values big will make the controller not work for some reason, there might be a bug
+t_plan = 0.1 ; % if t_plan = t_move, then real time planning is enforced
+t_move = 0.1 ; %making these values big will make the controller not work for some reason, there might be a bug
 %keeps reducing stepsize.  SS
 %works well when target is always 0.49 m away from current state, when they
 %are close(t_move is too long), numerical instability occur...  
@@ -31,16 +31,18 @@ t_move = 0.5 ; %making these values big will make the controller not work for so
 % simulation
 sim_start_idx = 1 ;
 sim_end_idx = 1 ;
-verbose_level = 5 ;
+verbose_level = 0 ;
 plot_HLP_flag = true ;
 
 % file i/o
 save_summaries_flag = false ;
-save_file_location = '~/MATLAB/fastrack_comparison_data/' ;
+save_file_location = './' ;
 
 %% automated from here
 A1 =  turtlebot_agent;
 A2 = fastrack_agent ;
+A2.LLC.TEB.sD.dynSys.v_max = 0.48;
+A2.LLC.TEB.TEB = 0.37;
 % tried both ode4 and ode 113, all don't work really well, also produce 
 % unsmooth trajectory. Part of the reason is due to that fastrack is just a
 % safety controller, there needs to be a performance controller working together
@@ -63,12 +65,12 @@ P1 = turtlebot_RTD_planner_static('verbose',verbose_level,'buffer',0.01,...
                                  'plot_HLP_flag',plot_HLP_flag) ;
 
 % fastrack planner
-P2 = turtlebot_RRT_planner('verbose',verbose_level,'buffer',buffer,...
+P2 = turtlebot_RRT_star_planner('verbose',verbose_level,'buffer',buffer,...
     't_plan',t_plan,'t_move',t_move,'desired_speed',desired_speed,...
     'plot_HLP_flag',plot_HLP_flag) ;
 
 
-% P_together = {P1 P2} ;
+ P_together = {P1 P2} ;
 A_together = A2 ;
 P_together = P2 ;
 
@@ -80,7 +82,7 @@ for idx = sim_start_idx:sim_end_idx
         'buffer',buffer) ;
     
     S = simulator(A_together,W,P_together,'allow_replan_errors',true,'verbose',verbose_level,...
-              'max_sim_time',30,'max_sim_iterations',1000,'plot_while_running',1) ;
+              'max_sim_time',90,'max_sim_iterations',1000,'plot_while_running',1) ;
     
     S.worlds{1} = W;
 %     try

@@ -1,4 +1,4 @@
-function [data,tau,sD,TEB]=P4D_Q2D_RS_SIMON(gN, visualize)
+
 %4d system  tracking 2D rrt
 w_max = 2; % rad/s
 acc_max = 2;
@@ -6,23 +6,23 @@ p1_limit = 0.2;
 p2_limit = 0.2;
 %%
 % default to more grid points in x and y than in theta
-if nargin < 1
+% if nargin < 1
     % number of grid points (more grid points --> better results, but
     % slower computation)
     gN = ones(4, 1)*30;
-end
+% end
 
 % default to visualizing
-if nargin < 2
-    visualize = 1;
-end
+% if nargin < 2
+    visualize = 0;
+
 
 %% Grid and cost
 
 % grid bounds in x, y, theta (relative dynamics)
 
-gMin = [-2; -2; -pi;  -3; ];
-gMax = [2 ; 2 ;  pi;  3; ];
+gMin = [-1.5; -1.5; -pi;  -1; ];
+gMax = [1.5 ; 1.5 ;  pi;  1; ];
 
 % create grid with 3rd dimension periodic
 sD.grid = createGrid(gMin, gMax, gN,3);
@@ -39,7 +39,7 @@ if visualize
     clf
     subplot(1,2,1)
     % project down to 2D so we can see the value function
-    [g2D, data02D] = proj(sD.grid,data0,[0 0 1 1],'min');
+    [g2D, data02D] = proj(sD.grid,data0,[0 0 1 1],'max');
     
     
     color = 'b'; % color
@@ -136,7 +136,7 @@ tau = 0:dt:tMax;
 extraArgs.stopConverge = true;
 
 % convergence threshold
-extraArgs.convergeThreshold = dt;
+extraArgs.convergeThreshold = 0.01;
 
 % only keep the most recently computed data
 extraArgs.keepLast = 1;
@@ -162,7 +162,7 @@ if visualize
     figure(1)
     hold on
     subplot(1,2,2)
-    [g2D, data2D] = proj(sD.grid, data, [0 0 1 1 ], 'min');
+    [g2D, data2D] = proj(sD.grid, data, [0 0 1 1 ], 'max');
     
 
     % visualize sqrt of value function
@@ -180,13 +180,13 @@ if visualize
     ylabel('$r_y$','interpreter','latex');
     zlabel('$V$','interpreter','latex');
     title('Converged Value function $V(x)$','interpreter','latex');
-    
+    %%
     
     alpha = .2;
     levels = [TEB, TEB+.5, TEB+1];
     
-    [g3D, data3D] = proj(sD.grid,data,[0 0 1 0],'min');
-    [~, data03D] = proj(sD.grid,data0,[0 0 1 0],'min');
+    [g3D, data3D] = proj(sD.grid,data,[0 0 0 1],'max');
+    [~, data03D] = proj(sD.grid,data0,[0 0 0 1],'max');
     [g2D, data2D] = proj(sD.grid,data,[0 0 1 1]);%'max');
     % Plot some levels of the value function
     
@@ -269,16 +269,16 @@ if visualize
     
     set(gcf,'Color','white')
     %%
-    deriv = computeGradients(sD.grid,data);
 %save
 %%
-planner_data.p1_limit  = p1_limit;
-planner_data.p2_limit = p2_limit;
-save(['Dubin4D' num2str(gN(1)) '_dt0' num2str(dt*100) '_tMax_converge.mat'], 'TEB','sD', 'data','deriv','planner_data','-v7.3');
+
     %%
 end
+planner_data.p1_limit  = p1_limit;
+planner_data.p2_limit = p2_limit;
+deriv = computeGradients(sD.grid,data);
 
-end
+save(['Dubin4D1mpers_tMax_converge.mat'], 'TEB','sD', 'data','deriv','planner_data','-v7.3');
 
 
 %%h0 = visSetIm(g3D, sqrt(data03D), 'blue', levels(1)+small);
