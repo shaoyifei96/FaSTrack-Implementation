@@ -14,7 +14,7 @@ desired_speed = 1 ; % m/s
 % world
 obstacle_size_bounds = [0.2, 0.3] ; % side length [min, max]
 N_obstacles = 10 ;
-bounds = [-10,10,-6,6] ;
+bounds = [-4,4,-2,2] ;
 goal_radius = 0.5 ;
 
 % planner limit
@@ -22,8 +22,8 @@ goal_radius = 0.5 ;
 % get u to be with in 0.49m of the goal position. so to be connservative,
 % take a step of no further than 0.49 m everytime. SS
 % TEB = 0.49 m  
-t_plan = 0.5 ; % if t_plan = t_move, then real time planning is enforced
-t_move = 0.5 ; %making these values big will make the controller not work for some reason, there might be a bug
+t_plan = 0.1 ; % if t_plan = t_move, then real time planning is enforced
+t_move = 0.1 ; %making these values big will make the controller not work for some reason, there might be a bug
 %keeps reducing stepsize.  SS
 %works well when target is always 0.49 m away from current state, when they
 %are close(t_move is too long), numerical instability occur...  
@@ -41,6 +41,8 @@ save_file_location = './' ;
 %% automated from here
 A1 =  turtlebot_agent;
 A2 = fastrack_agent ;
+A2.LLC.TEB.sD.dynSys.v_max = 0.48;
+A2.LLC.TEB.TEB = 0.37;
 % tried both ode4 and ode 113, all don't work really well, also produce 
 % unsmooth trajectory. Part of the reason is due to that fastrack is just a
 % safety controller, there needs to be a performance controller working together

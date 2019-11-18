@@ -1,7 +1,7 @@
 close all; clear
 TEB= zeros(10, 1)
 spds= zeros(10, 1)
-v_maxmax = 1.2;
+v_maxmax = 2;
 n = 20;
 for i = 1: n
 spd = i*v_maxmax/n;

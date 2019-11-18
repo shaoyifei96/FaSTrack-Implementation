@@ -32,7 +32,7 @@ classdef fastrack_agent < RTD_agent_2D
             n_states = 4 ;
             n_inputs = 2 ;
             stopping_time = 1 ;
-            sensor_radius = 3 ;
+            sensor_radius = 1000 ;
             LLC =  fastrack_LLC;
             LLCP = turtlebot_PD_LLC ;
             
