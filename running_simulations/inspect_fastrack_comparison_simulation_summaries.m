@@ -7,7 +7,7 @@
 % Updated: 1 Nov 2019
 %
 %% user parameters
-save_file_location = './result' ;
+save_file_location = './' ;
 
 %% automated from here
 files = dir(save_file_location) ;
