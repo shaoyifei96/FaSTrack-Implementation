@@ -23,7 +23,7 @@ time_to_goal = [] ;
 for file_idx = 3:length(files)
     file_name = files(file_idx).name ;
 
-    if length(file_name) > 3 && strcmpi(file_name(end-2:end),'mat')
+    if length(file_name) > 3 && strcmpi(file_name(end-2:end),'mat') &&strcmpi(file_name(1:5),'trial')
         data = load(files(file_idx).name) ;
 
         summary = data.summary ;
@@ -46,7 +46,7 @@ for file_idx = 3:length(files)
         % increment
         N_trials = N_trials + 1 ;
         
-        if mod(N_trials,10) == 0
+        if mod(N_trials,5) == 0
             disp(['# of files inspected: ',num2str(N_trials)])
         end
     end
@@ -56,7 +56,7 @@ end
 clc
 
 for idx = 1:n_planners
-    disp(summary(idx).planner_name)
+    disp(summary(idx).agent_name)
     disp(['Goals: ',num2str(100*sum(goals(idx,:))/N_trials,'%0.1f'),' %'])
     disp(['Collisions: ',num2str(100*sum(collisions(idx,:))/N_trials,'%0.1f'),' %'])
     disp(['Peak Speed: ',num2str(mean(peak_speed(idx,:)),'%0.1f'),' m/s'])
@@ -70,22 +70,22 @@ RTD_crash_idxs = find(collisions) ;
 A = turtlebot_agent ;
 
 % for idx = RTD_crash_idxs
-file_idx = 311 ;
-data = load(files(file_idx).name) ;
+% file_idx = 57 ;
+% data = load(files(file_idx).name) ;
 summary = data.summary ;
-
-% set up agent
+% 
+% % set up agent
 A.state = summary(1).agent_info.state ;
 A.time = summary(1).agent_info.time ;
-
-% set up world
+% 
+% % set up world
 W = static_box_world() ;
 W.start = summary(1).start ;
 W.goal = summary(1).goal ;
 W.obstacles = summary(1).obstacles ;
 W.obstacles_seen = W.obstacles ; 
-
-% plot
+% 
+% % plot
 figure(1) ; clf ; axis equal ;
 plot(W)
 plot(A)

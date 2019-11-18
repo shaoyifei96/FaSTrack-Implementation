@@ -31,8 +31,8 @@ t_move = 0.5 ; %making these values big will make the controller not work for so
 %are close(t_move is too long), numerical instability occur...  
 
 % simulation
-sim_start_idx = 1 ;
-sim_end_idx = 200 ;
+sim_start_idx = 35;
+sim_end_idx = 135 ;
 verbose_level = 0 ;
 plot_HLP_flag = false ;
 plot_simulator_flag = false;
@@ -89,13 +89,9 @@ for idx = sim_start_idx:sim_end_idx
               'max_sim_time',90,'max_sim_iterations',1000,'plot_while_running',plot_simulator_flag) ;
     
     S.worlds{1} = W;
-%     try
+     try
         S.run()
-%     catch ME
-%         disp('simulator errored!')
-%         continue;
-%     end
-    summary = S.simulation_summary ;
+        summary = S.simulation_summary ;
     
     % generate filename
     save_filename = [save_file_location,'trial_',num2str(idx,'%03.f')] ;
@@ -103,4 +99,10 @@ for idx = sim_start_idx:sim_end_idx
     if save_summaries_flag
         save(save_filename,'summary','W')
     end
+    
+     catch ME
+         disp('simulator errored!')
+         continue;
+     end
+    
 end
