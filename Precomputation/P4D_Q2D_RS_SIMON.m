@@ -9,21 +9,21 @@ p2_limit = 0.2;
 % if nargin < 1
     % number of grid points (more grid points --> better results, but
     % slower computation)
-    gN = ones(4, 1)*100;
+    gN = ones(4, 1)*40;
 % end
 
 % default to visualizing
 % if nargin < 2
     visualize = 0;
 
-   max_spd = 1.5;
+   max_spd = 3.0;
 
 %% Grid and cost
 
 % grid bounds in x, y, theta (relative dynamics)
 
-gMin = [-1.2; -1.2; -pi;  -1.8; ];
-gMax = [1.2; 1.2 ;  pi;  1.8; ];
+gMin = [-1.5; -1.5; -pi;  -3; ];
+gMax = [1.5; 1.5 ;  pi;  3; ];
 
 % create grid with 3rd dimension periodic
 sD.grid = createGrid(gMin, gMax, gN,3);
@@ -91,7 +91,7 @@ sD.uMode = 'min';
 sD.dMode = 'max';
 
 % how carefully are we measuring gradients?
-sD.accuracy = 'veryHigh';
+sD.accuracy = 'low';
 
 
 % set up what we want to visualize while computing this
@@ -128,7 +128,7 @@ dt = 0.1;
 
 % upper bound on how long the code can keep going (hopefully converges far
 % before this time)
-tMax = 100;
+tMax = 60;
 
 % time stamps
 tau = 0:dt:tMax;
@@ -279,7 +279,7 @@ planner_data.p1_limit  = p1_limit;
 planner_data.p2_limit = p2_limit;
 deriv = computeGradients(sD.grid,data);
 
-save(['Dubin4D1.5_veryHigh.mat'], 'TEB','sD', 'data','deriv','planner_data','-v7.3');
+save(['Dubin4D3.0_40_low.mat'], 'TEB','sD', 'data','deriv','planner_data','-v7.3');
 
 
 %%h0 = visSetIm(g3D, sqrt(data03D), 'blue', levels(1)+small);
