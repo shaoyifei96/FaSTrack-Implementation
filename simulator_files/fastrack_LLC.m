@@ -39,10 +39,11 @@ classdef fastrack_LLC < low_level_controller
             else
                 % otherwise, we are doing feedback about a desired
                 % trajectory
-               % get distances along planned trajectory
+                
+                % get distances along planned trajectory
                 X_des = Z_des(1:2,:) ;
                 d_along_plan = dist_polyline_cumulative(X_des) ;
-
+                
                 if d_along_plan(end) > 0
 %                     % get closest point to current agent location
 %                     d_cur = dist_point_on_polyline(z_cur(A.position_indices),X_des) ;
@@ -59,7 +60,9 @@ classdef fastrack_LLC < low_level_controller
                 else
                     z_des = Z_des(:,end) ;
                 end
+                % z_des = match_trajectories(t_cur,T_des,Z_des) ;
             end
+
 %              z_des=[1;-1];
              z_des=LLC.Q*[z_des(1); z_des(2)];
              
@@ -95,20 +98,20 @@ classdef fastrack_LLC < low_level_controller
 %             end
             
             
-%             rel_z
-%             U
-%             w_des = u_des(1) ;
-%             a_des = u_des(2) ;
+            %             rel_z
+            %             U
+            %             w_des = u_des(1) ;
+            %             a_des = u_des(2) ;
             
             % get gains
-%             k_v = LLC.speed_gain ;
-%             k_a = LLC.accel_gain ;
-%             k_h = LLC.yaw_gain ;
-%             k_w = LLC.yaw_rate_gain ;
+            %             k_v = LLC.speed_gain ;
+            %             k_a = LLC.accel_gain ;
+            %             k_h = LLC.yaw_gain ;
+            %             k_w = LLC.yaw_rate_gain ;
             %h= heading    v= velocity  a_des
             % compute unsaturated inputs (they get saturated by the agent)
-%             w_out = k_h*(h_des - h_cur) + k_w*w_des ;
-%             a_out = k_v*(v_des - v_cur) + k_a*a_des ;            
+            %             w_out = k_h*(h_des - h_cur) + k_w*w_des ;
+            %             a_out = k_v*(v_des - v_cur) + k_a*a_des ;
             
             % create output
             %U = [w_out ; a_out] ;

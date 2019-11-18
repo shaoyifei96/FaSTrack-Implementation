@@ -2,13 +2,14 @@
 % This script runs through all the .mat files containing summaries in a
 % folder, and re-runs them with a FasTrack agent/planner.
 %
-% Author: Shreyas Kousik%
+% Author: Shreyas Kousik
 % Created: 31 Oct 2019
-% Updated: 31 Oct 2019
+% Updated: 4 Nov 2019
 %
 %% user parameters
 % agent
 desired_speed = 1 ; % m/s
+sensor_radius = 10 ; % m
 
 % world
 obstacle_size_bounds = [0.2, 0.3] ; % side length [min, max]
@@ -19,6 +20,7 @@ goal_radius = 0.5 ;
 box_size = 0.25 ;
 
 % planner time limits
+initialize_tree_mode = 'once' ; % pick 'once' or 'iter'
 t_plan = 0.5 ;
 t_move = 0.5 ;
 
@@ -28,14 +30,16 @@ plot_HLP_flag = true ;
 
 % file i/o
 save_summaries_flag = true ;
-save_file_location = '~/MATLAB/fastrack_comparison_data/' ;
+load_file_location = '~/MATLAB/fastrack_comparison_data/round_1/' ;
+save_file_location = '~/MATLAB/fastrack_comparison_data/round_3/' ;
 
 %% (automated from here)
 % get all files
-files = dir(save_file_location) ;
+files = dir(load_file_location) ;
 
 for idx = 3:length(files)
     n = files(idx).name ;
+    
     if length(n) > 3 && strcmpi(n(end-2:end),'mat')
         % load the summary
         data = load(files(idx).name) ;
@@ -43,12 +47,14 @@ for idx = 3:length(files)
         
         % make a fastrack agent
         A = fastrack_agent ;
+        A.sensor_radius = sensor_radius ;
         
         % make a fastrack planner
         fastrack_buffer = A.LLC.TEB.TEB + A.footprint ;
         P = turtlebot_RRT_planner('verbose',verbose_level,'buffer',fastrack_buffer,...
             't_plan',t_plan,'t_move',t_move,'desired_speed',desired_speed,...
-            'plot_HLP_flag',plot_HLP_flag) ;
+            'plot_HLP_flag',plot_HLP_flag,...
+            'initialize_tree_mode',initialize_tree_mode) ;
         
         % make a world
         try
@@ -74,13 +80,22 @@ for idx = 3:length(files)
             'max_sim_time',30,'max_sim_iterations',1000,'plot_while_running',1) ;
         
         % run the simulation
-        S.run()
+        run_successful = false ;
+        while ~run_successful
+            try
+                S.run()
+                run_successful = true ;
+            catch
+                run_successful = false ;
+            end
+        end
         
         % get simulation summary
         summary = S.simulation_summary ;
         
         % generate filename
-        save_filename = [save_file_location,'trial_fastrack_only_',num2str(idx,'%03.f'),'.mat'] ;
+        trial_number = n(end-6:end-4) ;
+        save_filename = [save_file_location,'RTDvFTK_fastrack_only_',trial_number,'.mat'] ;
         
         if save_summaries_flag
             save(save_filename,'summary','W')

@@ -1,7 +1,5 @@
 classdef fastrack_agent < RTD_agent_2D
 % Class: fastrack_agent < RTD_agent_2D < agent
-%
-% T
     
     properties
         integrator_type = 'ode4' ; 
@@ -97,7 +95,7 @@ classdef fastrack_agent < RTD_agent_2D
             u = u_s ; % uncomment for safety only
             
             % u = u_p ; % uncomment for performance only
-            
+
             u(isnan(u)) = 0 ; % safety check
             w_des = u(1) ;
             a_des = u(2) ;
