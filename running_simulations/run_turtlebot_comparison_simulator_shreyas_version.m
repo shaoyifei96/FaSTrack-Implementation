@@ -32,7 +32,7 @@ t_move = 0.5 ; %making these values big will make the controller not work for so
 
 % simulation
 sim_start_idx = 1 ;
-sim_end_idx = 5 ;
+sim_end_idx = 200 ;
 verbose_level = 0 ;
 plot_HLP_flag = false ;
 plot_simulator_flag = false;
@@ -79,6 +79,7 @@ P2 = turtlebot_RRT_star_planner('verbose',verbose_level,'buffer',buffer,...
 
 %% run many simulations
 for idx = sim_start_idx:sim_end_idx
+	idx
     W = static_box_world('bounds',bounds,'N_obstacles',N_obstacles,...
         'verbose',verbose_level,'goal_radius',goal_radius,...
         'obstacle_size_bounds',obstacle_size_bounds,...
