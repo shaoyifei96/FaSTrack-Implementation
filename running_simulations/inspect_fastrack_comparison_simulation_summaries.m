@@ -73,7 +73,9 @@ A = turtlebot_agent ;
 % file_idx = 57 ;
 % data = load(files(file_idx).name) ;
 summary = data.summary ;
-% 
+%%
+A = turtlebot_agent ;
+summary(1)= summary(2) 
 % % set up agent
 A.state = summary(1).agent_info.state ;
 A.time = summary(1).agent_info.time ;

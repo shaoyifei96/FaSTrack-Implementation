@@ -85,16 +85,16 @@ classdef fastrack_agent < RTD_agent_2D
             
             % get nominal control inputs
            [u_s, TEB_exp] = A.LLC.get_control_inputs(A,t,z,T,U,Z);
-           if (TEB_exp) > A.TEB_max
-                A.TEB_max = TEB_exp;
-           end
-           
-           % u_p = A.LLCP.get_control_inputs(A,t,z,T,U,Z);
-            %u = (normalizer > 0.8) * u_s + (normalizer< 0.8)*(u_s * normalizer + u_p* (1-normalizer));
+%            if (TEB_exp) > A.TEB_max
+%                 A.TEB_max = TEB_exp;
+%            end
+           normalizer = TEB_exp /A.LLC.TEBadj;
+            u_p = A.LLCP.get_control_inputs(A,t,z,T,U,Z);
+            u = ( normalizer> 0.8) * u_s + (normalizer< 0.8)*(u_s * normalizer + u_p* (1-normalizer));
             
-            u = u_s ; % uncomment for safety only
+          %  u = u_s ; % uncomment for safety only
             
-            % u = u_p ; % uncomment for performance only
+             %u = u_p ; % uncomment for performance only
 
             u(isnan(u)) = 0 ; % safety check
             w_des = u(1) ;

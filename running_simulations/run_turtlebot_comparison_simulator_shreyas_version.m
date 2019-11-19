@@ -6,6 +6,7 @@ clear ; clc ;
 % Author: Shreyas Kousik and Simon Shao
 % Created: 19 Oct 2019
 % Updated: 30 Oct 2019
+% Updated by Simon: 18 Nov 2019
 %
 %% user parameters
 % agent
@@ -13,8 +14,8 @@ desired_speed = 0.2; % m/s
 
 % world
 obstacle_size_bounds = [0.2, 0.3] ; % side length [min, max]
-N_obstacles = 10;
-bounds = [-6,6,-3,3] ;
+N_obstacles = 20;
+bounds = [-6,6,-2,2] ;
 goal_radius = 0.5 ;
 
 % planner limit
@@ -22,20 +23,20 @@ goal_radius = 0.5 ;
 % get u to be with in 0.49m of the goal position. so to be connservative,
 % take a step of no further than 0.49 m everytime. SS
 % TEB = 0.49 m  
-t_plan_fas = 15;
-t_move_fas =100;
-t_plan = 0.5; % if t_plan = t_move, then real time planning is enforced
-t_move = 0.5 ; %making these values big will make the controller not work for some reason, there might be a bug
+t_plan_fas = 10;
+t_move_fas =60;
+t_plan = 1/2; % if t_plan = t_move, then real time planning is enforced
+t_move = 1/2 ; %making these values big will make the controller not work for some reason, there might be a bug
 %keeps reducing stepsize.  SS
 %works well when target is always 0.49 m away from current state, when they
 %are close(t_move is too long), numerical instability occur...  
 
 % simulation
-sim_start_idx = 35;
+sim_start_idx = 1;
 sim_end_idx = 135 ;
 verbose_level = 0 ;
-plot_HLP_flag = false ;
-plot_simulator_flag = false;
+plot_HLP_flag = true ;
+plot_simulator_flag = true;
 
 % file i/o
 save_summaries_flag = true ;
@@ -75,7 +76,7 @@ P2 = turtlebot_RRT_star_planner('verbose',verbose_level,'buffer',buffer,...
 
  P_together = {P1 P2} ;
 % A_together = A2 ;
-% P_together = P2 ;
+%  P_together = P2 ;
 
 %% run many simulations
 for idx = sim_start_idx:sim_end_idx
@@ -85,11 +86,11 @@ for idx = sim_start_idx:sim_end_idx
         'obstacle_size_bounds',obstacle_size_bounds,...
         'buffer',buffer) ;
     
-    S = simulator(A_together,W,P_together,'allow_replan_errors',true,'verbose',verbose_level,...
-              'max_sim_time',90,'max_sim_iterations',1000,'plot_while_running',plot_simulator_flag) ;
+    S = simulator(A_together,W,P_together,'allow_replan_errors',false,'verbose',verbose_level,...
+              'max_sim_time',60,'max_sim_iterations',80,'plot_while_running',plot_simulator_flag) ;
     
     S.worlds{1} = W;
-     try
+%      try
         S.run()
         summary = S.simulation_summary ;
     
@@ -100,9 +101,9 @@ for idx = sim_start_idx:sim_end_idx
         save(save_filename,'summary','W')
     end
     
-     catch ME
-         disp('simulator errored!')
-         continue;
-     end
+%     catch ME
+%          disp('simulator errored!')
+%          continue;
+%      end
     
 end
