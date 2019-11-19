@@ -14,7 +14,7 @@ desired_speed = 0.2; % m/s
 
 % world
 obstacle_size_bounds = [0.2, 0.3] ; % side length [min, max]
-N_obstacles = 20;
+N_obstacles = 10 ;
 bounds = [-6,6,-2,2] ;
 goal_radius = 0.5 ;
 
@@ -24,12 +24,18 @@ goal_radius = 0.5 ;
 % take a step of no further than 0.49 m everytime. SS
 % TEB = 0.49 m  
 t_plan_fas = 1;
-t_move_fas =1;
-t_plan = 1/2; % if t_plan = t_move, then real time planning is enforced
+t_move_fas = 1;
+t_plan = 1/2 ; % if t_plan = t_move, then real time planning is enforced
 t_move = 1/2 ; %making these values big will make the controller not work for some reason, there might be a bug
 %keeps reducing stepsize.  SS
 %works well when target is always 0.49 m away from current state, when they
 %are close(t_move is too long), numerical instability occur...  
+
+% turtlebot RRT planner parameters
+initialize_tree_mode = 'once' ; % 'iter' or 'once'
+HLP_grow_tree_mode = 'new' ; % 'new' or 'seed' or 'keep' (only matters if using 'iter' above)
+grow_tree_once_timeout = 2 ;
+HLP_type = 'RRT*' ; % 'rrt' or 'rrt*' or 'connect' or 'connect*'
 
 % simulation
 sim_start_idx = 1;
@@ -71,10 +77,13 @@ P1 = turtlebot_RTD_planner_static('verbose',verbose_level,'buffer',0.01,...
 % fastrack planner
 P2 = turtlebot_RRT_planner('verbose',verbose_level,'buffer',buffer,...
     't_plan',t_plan_fas,'t_move',t_move_fas,'desired_speed',desired_speed,...
-    'plot_HLP_flag',plot_HLP_flag) ;
+    'plot_HLP_flag',plot_HLP_flag,...
+    'HLP_type',HLP_type,...
+    'initialize_tree_mode',initialize_tree_mode,...
+    'grow_tree_once_timeout',grow_tree_once_timeout,...
+    'HLP_grow_tree_mode',HLP_grow_tree_mode) ;
 
-
- P_together = {P1 P2} ;
+%  P_together = {P1 P2} ;
 A_together = A2 ;
  P_together = P2 ;
 
