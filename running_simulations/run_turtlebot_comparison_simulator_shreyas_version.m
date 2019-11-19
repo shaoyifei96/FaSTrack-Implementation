@@ -23,8 +23,8 @@ goal_radius = 0.5 ;
 % get u to be with in 0.49m of the goal position. so to be connservative,
 % take a step of no further than 0.49 m everytime. SS
 % TEB = 0.49 m  
-t_plan_fas = 10;
-t_move_fas =60;
+t_plan_fas = 20;
+t_move_fas =70;
 t_plan = 1/2; % if t_plan = t_move, then real time planning is enforced
 t_move = 1/2 ; %making these values big will make the controller not work for some reason, there might be a bug
 %keeps reducing stepsize.  SS
@@ -33,7 +33,7 @@ t_move = 1/2 ; %making these values big will make the controller not work for so
 
 % simulation
 sim_start_idx = 1;
-sim_end_idx = 135 ;
+sim_end_idx = 500 ;
 verbose_level = 0 ;
 plot_HLP_flag = true ;
 plot_simulator_flag = true;
@@ -87,7 +87,7 @@ for idx = sim_start_idx:sim_end_idx
         'buffer',buffer) ;
     
     S = simulator(A_together,W,P_together,'allow_replan_errors',false,'verbose',verbose_level,...
-              'max_sim_time',60,'max_sim_iterations',80,'plot_while_running',plot_simulator_flag) ;
+              'max_sim_time',70,'max_sim_iterations',80,'plot_while_running',plot_simulator_flag) ;
     
     S.worlds{1} = W;
 %      try

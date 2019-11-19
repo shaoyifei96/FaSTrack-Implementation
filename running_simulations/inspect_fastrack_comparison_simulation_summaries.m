@@ -20,7 +20,7 @@ peak_speed = [] ;
 time_to_goal = [] ;
 
 %% load and extract data
-for file_idx = 3:length(files)
+for file_idx = 1:length(files)
     file_name = files(file_idx).name ;
 
     if length(file_name) > 3 && strcmpi(file_name(end-2:end),'mat') &&strcmpi(file_name(1:5),'trial')
@@ -38,7 +38,8 @@ for file_idx = 3:length(files)
         % get the data
         for idx = 1:n_planners
             goals(idx,end) = summary(idx).goal_check ;
-            collisions(idx,end) = summary(idx).collision_check ;
+            col = summary(idx).collision_check 
+            collisions(idx,end) = col;
             peak_speed(idx,end) = max(summary(idx).trajectory(4,:)) ;
             time_to_goal(idx,end) = summary(idx).total_simulated_time(end) ;
         end
@@ -53,8 +54,6 @@ for file_idx = 3:length(files)
 end
 
 %% analyze data
-clc
-
 for idx = 1:n_planners
     disp(summary(idx).agent_name)
     disp(['Goals: ',num2str(100*sum(goals(idx,:))/N_trials,'%0.1f'),' %'])
