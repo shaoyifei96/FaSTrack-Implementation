@@ -23,8 +23,8 @@ goal_radius = 0.5 ;
 % get u to be with in 0.49m of the goal position. so to be connservative,
 % take a step of no further than 0.49 m everytime. SS
 % TEB = 0.49 m  
-t_plan_fas = 20;
-t_move_fas =70;
+t_plan_fas = 1;
+t_move_fas =1;
 t_plan = 1/2; % if t_plan = t_move, then real time planning is enforced
 t_move = 1/2 ; %making these values big will make the controller not work for some reason, there might be a bug
 %keeps reducing stepsize.  SS
@@ -69,14 +69,14 @@ P1 = turtlebot_RTD_planner_static('verbose',verbose_level,'buffer',0.01,...
                                  'plot_HLP_flag',plot_HLP_flag) ;
 
 % fastrack planner
-P2 = turtlebot_RRT_star_planner('verbose',verbose_level,'buffer',buffer,...
+P2 = turtlebot_RRT_planner('verbose',verbose_level,'buffer',buffer,...
     't_plan',t_plan_fas,'t_move',t_move_fas,'desired_speed',desired_speed,...
     'plot_HLP_flag',plot_HLP_flag) ;
 
 
  P_together = {P1 P2} ;
-% A_together = A2 ;
-%  P_together = P2 ;
+A_together = A2 ;
+ P_together = P2 ;
 
 %% run many simulations
 for idx = sim_start_idx:sim_end_idx

@@ -18,6 +18,7 @@ goals = [] ;
 collisions = [] ;
 peak_speed = [] ;
 time_to_goal = [] ;
+file_name_arr = [];
 
 %% load and extract data
 for file_idx = 1:length(files)
@@ -25,12 +26,12 @@ for file_idx = 1:length(files)
 
     if length(file_name) > 3 && strcmpi(file_name(end-2:end),'mat') &&strcmpi(file_name(1:5),'trial')
         data = load(files(file_idx).name) ;
-
         summary = data.summary ;
         
         % add a column to the data
         n_planners = length(summary) ;
         goals = [goals, nan(n_planners,1)];
+        file_name_arr = [file_name_arr; file_name];
         collisions = [collisions, nan(n_planners,1)] ;
         peak_speed = [peak_speed, nan(n_planners,1)] ;
         time_to_goal = [time_to_goal, nan(n_planners,1)] ;
@@ -38,8 +39,8 @@ for file_idx = 1:length(files)
         % get the data
         for idx = 1:n_planners
             goals(idx,end) = summary(idx).goal_check ;
-            col = summary(idx).collision_check 
-            collisions(idx,end) = col;
+            coll = summary(idx).collision_check ;
+            collisions(idx,end) = coll;
             peak_speed(idx,end) = max(summary(idx).trajectory(4,:)) ;
             time_to_goal(idx,end) = summary(idx).total_simulated_time(end) ;
         end
@@ -65,16 +66,15 @@ end
 
 %% plot any RTD crashes
 RTD_crash_idxs = find(collisions) ;
-
-A = turtlebot_agent ;
+max(collisions)
 
 % for idx = RTD_crash_idxs
 % file_idx = 57 ;
-% data = load(files(file_idx).name) ;
+data = load(files(file_idx).name) ;
 summary = data.summary ;
 %%
 A = turtlebot_agent ;
-summary(1)= summary(2) 
+% % summary(1)= summary(2) 
 % % set up agent
 A.state = summary(1).agent_info.state ;
 A.time = summary(1).agent_info.time ;
@@ -88,5 +88,23 @@ W.obstacles_seen = W.obstacles ;
 % 
 % % plot
 figure(1) ; clf ; axis equal ;
+plot(W)
+plot(A)
+%%
+A = fastrack_agent ;
+% % summary(1)= summary(2) 
+% % set up agent
+A.state = summary(2).agent_info.state ;
+A.time = summary(2).agent_info.time ;
+% 
+% % set up world
+W = static_box_world() ;
+W.start = summary(2).start ;
+W.goal = summary(2).goal ;
+W.obstacles = summary(2).obstacles ;
+W.obstacles_seen = W.obstacles ; 
+% 
+% % plot
+figure(2) ; clf ; axis equal ;
 plot(W)
 plot(A)
