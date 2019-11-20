@@ -1,4 +1,4 @@
-clear ; clc ;
+% clear ; clc ;
 %% description
 % This script runs a simulation with the TurtleBot in the simulator
 % framework, using RRT* to plan online.
@@ -11,6 +11,7 @@ clear ; clc ;
 %% user parameters
 % agent
 desired_speed = 0.2; % m/s
+
 
 % world
 obstacle_size_bounds = [0.2, 0.3] ; % side length [min, max]
@@ -34,18 +35,18 @@ t_move = 1/2 ; %making these values big will make the controller not work for so
 % turtlebot RRT planner parameters
 initialize_tree_mode = 'once' ; % 'iter' or 'once'
 HLP_grow_tree_mode = 'new' ; % 'new' or 'seed' or 'keep' (only matters if using 'iter' above)
-grow_tree_once_timeout = 2 ;
+grow_tree_once_timeout = 5;
 HLP_type = 'RRT*' ; % 'rrt' or 'rrt*' or 'connect' or 'connect*'
 
 % simulation
 sim_start_idx = 1;
-sim_end_idx = 500 ;
+sim_end_idx = 1 ;
 verbose_level = 0 ;
 plot_HLP_flag = true ;
 plot_simulator_flag = true;
 
 % file i/o
-save_summaries_flag = true ;
+save_summaries_flag = false ;
 save_file_location = './' ;
 
 %% automated from here
@@ -90,14 +91,13 @@ A_together = A2 ;
 %% run many simulations
 for idx = sim_start_idx:sim_end_idx
 	idx
-    W = static_box_world('bounds',bounds,'N_obstacles',N_obstacles,...
-        'verbose',verbose_level,'goal_radius',goal_radius,...
-        'obstacle_size_bounds',obstacle_size_bounds,...
-        'buffer',buffer) ;
-    
+%     W = static_box_world('bounds',bounds,'N_obstacles',N_obstacles,...
+%         'verbose',verbose_level,'goal_radius',goal_radius,...
+%         'obstacle_size_bounds',obstacle_size_bounds,...
+%         'buffer',buffer) ;
+%     W = data.W ;
     S = simulator(A_together,W,P_together,'allow_replan_errors',false,'verbose',verbose_level,...
               'max_sim_time',70,'max_sim_iterations',80,'plot_while_running',plot_simulator_flag) ;
-    
     S.worlds{1} = W;
 %      try
         S.run()
