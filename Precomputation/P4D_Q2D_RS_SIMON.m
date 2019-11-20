@@ -16,7 +16,7 @@ p2_limit = 0.2;
 % if nargin < 2
     visualize = 0;
 
-   max_spd = 3.0;
+   max_spd = 0.54;
 
 %% Grid and cost
 
@@ -91,7 +91,7 @@ sD.uMode = 'min';
 sD.dMode = 'max';
 
 % how carefully are we measuring gradients?
-sD.accuracy = 'low';
+sD.accuracy = 'medium';
 
 
 % set up what we want to visualize while computing this
@@ -279,7 +279,7 @@ planner_data.p1_limit  = p1_limit;
 planner_data.p2_limit = p2_limit;
 deriv = computeGradients(sD.grid,data);
 
-save(['Dubin4D3.0_40_low.mat'], 'TEB','sD', 'data','deriv','planner_data','-v7.3');
+save(['Dubin4D0.54_40_medium.mat'], 'TEB','sD', 'data','deriv','planner_data','-v7.3');
 
 
 %%h0 = visSetIm(g3D, sqrt(data03D), 'blue', levels(1)+small);
