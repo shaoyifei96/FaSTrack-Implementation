@@ -7,7 +7,7 @@
 % Updated: 1 Nov 2019
 %
 %% user parameters
-save_file_location = './' ;
+save_file_location = './20_obs_second_batch_result' ;
 
 %% automated from here
 files = dir(save_file_location) ;
