@@ -20,6 +20,7 @@ classdef fastrack_agent < RTD_agent_2D
         max_accel = 2.0 ; % m/s^2   
         LLCP
         TEB_max = 0;
+        ending_state = NaN;
     end
     
     methods
@@ -46,27 +47,31 @@ classdef fastrack_agent < RTD_agent_2D
         % been tracking; we have to define this different from the default
         % for the TurtleBot because it takes in acceleration as a control
         % input, as opposed to doing feedback about desired speed
+        
+        %fastrack has no special stopping condition, act normally as
+        %nothing has happened. SS
         function stop(A,t_stop)
+            if  isnan(A.ending_state)
+            A.ending_state = A.state(:,end);
+            end
             if nargin < 2
                 t_stop = A.stopping_time ;
             end
             
             % get the current speed
-            v = A.state(A.speed_index,end) ;
-
-            % check how long it will take to come to a stop and make the
-            % stopping time vector
-            t_req_to_stop = v/A.max_accel ;            
-            T_input = [0, max(t_req_to_stop,t_stop)] ;
+%             v = A.state(A.speed_index,end) ;
+% 
+%             % check how long it will take to come to a stop and make the
+%             % stopping time vector
+%             t_req_to_stop = v/A.max_accel ;            
+            T_input = [0, (t_stop)] ;
             
             % generate the input
             U_input = zeros(2,2) ;
             
             % generate desired trajectory
-            z0 = A.state(:,end) ;
-            h = A.state(3,end) ;
-            z1 = z0 + [0.001*cos(h) ; sin(h) ; 0 ; 0] ;
-            Z_input = [z0 z1] ;
+%             z0 =;
+            Z_input = [ A.ending_state A.ending_state ] ;
             
             % call move method to perform stop
             A.move(t_stop,T_input,U_input,Z_input) ;
@@ -74,6 +79,7 @@ classdef fastrack_agent < RTD_agent_2D
         
         %% dynamics
         function zd = dynamics(A,t,z,T,U,Z)
+            
             % handle no desired trajectory input
             if nargin < 6
                 Z = [] ;
@@ -92,7 +98,7 @@ classdef fastrack_agent < RTD_agent_2D
             u_p = A.LLCP.get_control_inputs(A,t,z,T,U,Z);
             u = ( normalizer> 0.8) * u_s + (normalizer< 0.8)*(u_s * normalizer + u_p* (1-normalizer));
             
-            u = u_s ; % uncomment for safety only
+            %u = u_s ; % uncomment for safety only
             
              %u = u_p ; % uncomment for performance only
 

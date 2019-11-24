@@ -7,7 +7,7 @@
 % Updated: 1 Nov 2019
 %
 %% user parameters
-save_file_location = './20_obs_second_batch_result' ;
+save_file_location = './' ;
 
 %% automated from here
 files = dir(save_file_location) ;
@@ -65,7 +65,7 @@ for idx = 1:n_planners
 end
 
 %% plot any RTD crashes
-RTD_crash_idxs = find(collisions) ;
+RTD_crash_idxs = find(collisions>0) ;
 max(collisions)
 
 % for idx = RTD_crash_idxs
@@ -87,7 +87,7 @@ W.obstacles = summary(1).obstacles ;
 W.obstacles_seen = W.obstacles ; 
 % 
 % % plot
-figure(1) ; clf ; axis equal ;
+figure(1) ; clf ; axis equal ; hold on
 plot(W)
 plot(A)
 %%
@@ -105,6 +105,6 @@ W.obstacles = summary(2).obstacles ;
 W.obstacles_seen = W.obstacles ; 
 % 
 % % plot
-figure(2) ; clf ; axis equal ;
+figure(2) ; clf ; axis equal ;hold on
 plot(W)
 plot(A)

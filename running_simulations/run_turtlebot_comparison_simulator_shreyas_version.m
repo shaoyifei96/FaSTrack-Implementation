@@ -26,8 +26,8 @@ goal_radius = 0.5 ;
 % TEB = 0.49 m
 t_plan_fas = 1;
 t_move_fas = 1;
-t_plan = 1/2 ; % if t_plan = t_move, then real time planning is enforced
-t_move = 1/2 ; %making these values big will make the controller not work for some reason, there might be a bug
+t_plan = 0.5 ; % if t_plan = t_move, then real time planning is enforced
+t_move = 0.5 ; %making these values big will make the controller not work for some reason, there might be a bug
 %keeps reducing stepsize.  SS
 %works well when target is always 0.49 m away from current state, when they
 %are close(t_move is too long), numerical instability occur...
@@ -35,25 +35,25 @@ t_move = 1/2 ; %making these values big will make the controller not work for so
 % turtlebot RRT planner parameters
 initialize_tree_mode = 'once' ; % 'iter' or 'once'
 HLP_grow_tree_mode = 'new' ; % 'new' or 'seed' or 'keep' (only matters if using 'iter' above)
-grow_tree_once_timeout = 5 ;
+grow_tree_once_timeout = 4 ;
 HLP_type = 'RRT*' ; % 'rrt' or 'rrt*' or 'connect' or 'connect*'
 
 % simulation
 sim_start_idx = 1;
-sim_end_idx = 1 ;
+sim_end_idx = 500 ;
 verbose_level = 10 ;
 plot_HLP_flag = true ;
 plot_simulator_flag = true;
 
 % file i/o
-save_summaries_flag = false ;
+save_summaries_flag = true ;
 save_file_location = './' ;
 
 %% automated from here
 A1 =  turtlebot_agent;
 A2 = fastrack_agent ;
-A2.LLC.TEB.sD.dynSys.v_max = 0.48;
-A2.LLC.TEB.TEB = 0.37;
+A2.LLC.TEB.sD.dynSys.v_max = 0.45;
+A2.LLC.TEB.TEB = 0.40;
 % tried both ode4 and ode 113, all don't work really well, also produce
 % unsmooth trajectory. Part of the reason is due to that fastrack is just a
 % safety controller, there needs to be a performance controller working together
@@ -97,7 +97,7 @@ for idx = sim_start_idx:sim_end_idx
         'buffer',buffer) ;
     %     W = data.W ;
     S = simulator(A_together,W,P_together,'allow_replan_errors',false,'verbose',verbose_level,...
-        'max_sim_time',70,'max_sim_iterations',80,'plot_while_running',plot_simulator_flag) ;
+        'max_sim_time',170,'max_sim_iterations',80,'plot_while_running',plot_simulator_flag) ;
     S.worlds{1} = W;
     %      try
     S.run()
