@@ -2,8 +2,8 @@
 %4d system  tracking 2D rrt
 w_max = 2; % rad/s
 acc_max = 2;
-p1_limit = 0.2;
-p2_limit = 0.2;
+p1_limit = 0.6;
+p2_limit = 0.6;
 %%
 % default to more grid points in x and y than in theta
 % if nargin < 1
@@ -16,14 +16,14 @@ p2_limit = 0.2;
 % if nargin < 2
     visualize = 0;
 
-   max_spd = 0.54;
+   max_spd = 1.0;
 
 %% Grid and cost
 
 % grid bounds in x, y, theta (relative dynamics)
 
-gMin = [-1.5; -1.5; -pi;  -3; ];
-gMax = [1.5; 1.5 ;  pi;  3; ];
+gMin = [-1.5; -1.5; -pi;  -max_spd; ];
+gMax = [1.5; 1.5 ;  pi;  max_spd; ];
 
 % create grid with 3rd dimension periodic
 sD.grid = createGrid(gMin, gMax, gN,3);
@@ -128,7 +128,7 @@ dt = 0.1;
 
 % upper bound on how long the code can keep going (hopefully converges far
 % before this time)
-tMax = 60;
+tMax = 40;
 
 % time stamps
 tau = 0:dt:tMax;
@@ -279,7 +279,7 @@ planner_data.p1_limit  = p1_limit;
 planner_data.p2_limit = p2_limit;
 deriv = computeGradients(sD.grid,data);
 
-save(['Dubin4D0.54_40_medium.mat'], 'TEB','sD', 'data','deriv','planner_data','-v7.3');
+save(['Dubin4D1.0_0.6_40_medium.mat'], 'TEB','sD', 'data','deriv','planner_data','-v7.3');
 
 
 %%h0 = visSetIm(g3D, sqrt(data03D), 'blue', levels(1)+small);
