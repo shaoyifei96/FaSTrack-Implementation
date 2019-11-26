@@ -65,7 +65,7 @@ for idx = 1:n_planners
 end
 
 %% plot any RTD crashes
-RTD_crash_idxs = find(collisions>0) ;
+RTD_crash_idxs = find(collisions(1,:)>0) ;
 max(collisions)
 
 % for idx = RTD_crash_idxs
@@ -73,7 +73,7 @@ max(collisions)
 data = load(files(file_idx).name) ;
 summary = data.summary ;
 %%
-A = turtlebot_agent ;
+ A = turtlebot_agent ;
 % % summary(1)= summary(2) 
 % % set up agent
 A.state = summary(1).agent_info.state ;

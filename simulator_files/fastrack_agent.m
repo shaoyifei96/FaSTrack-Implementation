@@ -21,6 +21,7 @@ classdef fastrack_agent < RTD_agent_2D
         LLCP
         TEB_max = 0;
         ending_state = NaN;
+        SIGKILL = 0;
     end
     
     methods
@@ -51,9 +52,10 @@ classdef fastrack_agent < RTD_agent_2D
         %fastrack has no special stopping condition, act normally as
         %nothing has happened. SS
         function stop(A,t_stop)
-            if  isnan(A.ending_state)
-            A.ending_state = A.state(:,end);
-            end
+            A.SIGKILL = 1 ;
+%             if  isnan(A.ending_state)
+%             A.ending_state = [last_planned_pt;0;0];
+%             end
             if nargin < 2
                 t_stop = A.stopping_time ;
             end
@@ -64,17 +66,17 @@ classdef fastrack_agent < RTD_agent_2D
 %             % check how long it will take to come to a stop and make the
 %             % stopping time vector
 %             t_req_to_stop = v/A.max_accel ;            
-            T_input = [0, (t_stop)] ;
-            
-            % generate the input
-            U_input = zeros(2,2) ;
-            
-            % generate desired trajectory
-%             z0 =;
-            Z_input = [ A.ending_state A.ending_state ] ;
-            
-            % call move method to perform stop
-            A.move(t_stop,T_input,U_input,Z_input) ;
+%             T_input = [0, (t_stop)] ;
+%             
+%             % generate the input
+%             U_input = zeros(2,2) ;
+%             
+%             % generate desired trajectory
+% %             z0 =;
+%             Z_input = [ A.ending_state A.ending_state ] ;
+%             
+%             % call move method to perform stop
+%             A.move(t_stop,T_input,U_input,Z_input) ;
         end
         
         %% dynamics

@@ -39,9 +39,9 @@ grow_tree_once_timeout = 4 ;
 HLP_type = 'RRT*' ; % 'rrt' or 'rrt*' or 'connect' or 'connect*'
 
 % simulation
-sim_start_idx = 1;
+sim_start_idx = 39;
 sim_end_idx = 500 ;
-verbose_level = 10 ;
+verbose_level = 0 ;
 plot_HLP_flag = true ;
 plot_simulator_flag = true;
 
@@ -53,7 +53,7 @@ save_file_location = './' ;
 A1 =  turtlebot_agent;
 A2 = fastrack_agent ;
 A2.LLC.TEB.sD.dynSys.v_max = 0.45;
-A2.LLC.TEB.TEB = 0.40;
+A2.LLC.TEB.TEB = 0.45;
 % tried both ode4 and ode 113, all don't work really well, also produce
 % unsmooth trajectory. Part of the reason is due to that fastrack is just a
 % safety controller, there needs to be a performance controller working together
@@ -69,7 +69,7 @@ buffer = A2.LLC.TEB.TEB + A2.footprint ; % m. obs augmented by teb so if plannin
 %real agent doesn't hit actual obs despite traching error. SS
 
 % RTD planner
-HLP = RRT_star_HLP('grow_tree_mode',HLP_grow_tree_mode) ;
+HLP = RRT_star_HLP('grow_tree_mode','seed') ;
 P1 = turtlebot_RTD_planner_static('verbose',verbose_level,'buffer',0.01,...
     't_plan',t_plan,'t_move',t_move,'HLP',HLP,...
     'plot_HLP_flag',plot_HLP_flag) ;
