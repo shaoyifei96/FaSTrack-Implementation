@@ -5,7 +5,7 @@ classdef turtlebot_3D_agent < RTD_agent_2D
     
     properties
         integrator_type = 'ode45' ; 
-        integrator_time_discretization = 0.01 ; % for ode4
+        integrator_time_discretization = 0.1 ; % for ode4
         % state limits
         max_speed = 2 ; % m/s (NOTE this is higher than in the specs, since
                         % the planner should not command speeds above its

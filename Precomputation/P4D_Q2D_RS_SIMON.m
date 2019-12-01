@@ -14,7 +14,7 @@ p2_limit = 0.2;
 
 % default to visualizing
 % if nargin < 2
-    visualize = 0;
+    visualize = 1;
 
 
 %% Grid and cost
