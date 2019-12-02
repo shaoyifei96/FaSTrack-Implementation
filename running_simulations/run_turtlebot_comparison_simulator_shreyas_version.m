@@ -72,7 +72,7 @@ buffer = A2.LLC.TEB.TEB + A2.footprint ; % m. obs augmented by teb so if plannin
 %real agent doesn't hit actual obs despite traching error. SS
 
 % RTD planner
-HLP = RRT_star_HLP('grow_tree_mode','seed') ;
+HLP = RRT_star_HLP('grow_tree_mode','new') ;
 P1 = turtlebot_RTD_planner_static('verbose',verbose_level,'buffer',0.01,...
     't_plan',t_plan,'t_move',t_move,'HLP',HLP,...
     'plot_HLP_flag',plot_HLP_flag) ;
@@ -103,6 +103,7 @@ for idx = sim_start_idx:sim_end_idx
     S = simulator(A_together,W,P_together,'allow_replan_errors',false,'verbose',verbose_level,...
         'max_sim_time',170,'max_sim_iterations',80,'plot_while_running',plot_simulator_flag) ;
     S.worlds{1} = W;
+    S.plot_while_running = false;
     try
         S.run()
         summary = S.simulation_summary ;
@@ -111,7 +112,7 @@ for idx = sim_start_idx:sim_end_idx
         save_filename = [save_file_location,'trial_',num2str(N_obstacles),'_',num2str(idx,'%03.f')] ;
 
         if save_summaries_flag
-            save(save_filename,'summary','W')
+            save(save_filename,'A_together','W','P_together','S','summary')
         end
 
     catch ME
