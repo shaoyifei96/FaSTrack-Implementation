@@ -91,7 +91,7 @@ sD.uMode = 'min';
 sD.dMode = 'max';
 
 % how carefully are we measuring gradients?
-sD.accuracy = 'medium';
+sD.accuracy = 'low';
 
 
 % set up what we want to visualize while computing this
@@ -155,7 +155,7 @@ runtime = toc;
 
 % Get TEB
 small = .1;
-TEB = min(sqrt(data(:)))+small;
+TEB =sqrt( min((data(:))));
 
 if visualize
     
