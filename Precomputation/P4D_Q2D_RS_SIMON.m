@@ -16,7 +16,7 @@ p2_limit = 0.6;
 % if nargin < 2
     visualize = 0;
 
-   max_spd = 1.5;
+   max_spd = 2;
 
 %% Grid and cost
 
@@ -137,7 +137,7 @@ tau = 0:dt:tMax;
 extraArgs.stopConverge = true;
 
 % convergence threshold
-extraArgs.convergeThreshold = 0.01;
+extraArgs.convergeThreshold = 0.04;
 
 % only keep the most recently computed data
 extraArgs.keepLast = 1;
@@ -279,7 +279,7 @@ planner_data.p1_limit  = p1_limit;
 planner_data.p2_limit = p2_limit;
 deriv = computeGradients(sD.grid,data);
 
-save(['Dubin4D1.5_0.6_40_low.mat'], 'TEB','sD', 'data','deriv','planner_data','-v7.3');
+save(['Dubin4D2.0_0.6_40_high.mat'], 'TEB','sD', 'data','deriv','planner_data','-v7.3');
 
 
 %%h0 = visSetIm(g3D, sqrt(data03D), 'blue', levels(1)+small);
