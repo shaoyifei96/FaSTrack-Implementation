@@ -8,7 +8,7 @@
 % Updated: 30 Oct 2019
 % Updated by Simon: 18 Nov 2019
 %
-obs_array = [10  12 15];
+obs_array = [15  16 18];
 for iii = 1:3
     N_obstacles= obs_array(iii);
 %% user parameters
@@ -37,7 +37,7 @@ t_move = 0.5 ; %making these values big will make the controller not work for so
 % turtlebot RRT planner parameters
 initialize_tree_mode = 'once' ; % 'iter' or 'once'
 HLP_grow_tree_mode = 'new' ; % 'new' or 'seed' or 'keep' (only matters if using 'iter' above)
-grow_tree_once_timeout = 4 ;
+grow_tree_once_timeout = 6 ;
 HLP_type = 'RRT*' ; % 'rrt' or 'rrt*' or 'connect' or 'connect*'
 
 % simulation
@@ -88,12 +88,12 @@ P2 = turtlebot_RRT_planner('verbose',verbose_level,'buffer',buffer,...
 
 P_together = {P1  P2} ;
 % P_together = P2 ;
-% A_together = A2 ;
-% P_together = P2 ;
+A_together = A2 ;
+P_together = P2 ;
 
 
 %% run many simulations
-for idx = sim_start_idx:sim_end_idx
+parfor idx = sim_start_idx:sim_end_idx
     idx
     W = static_box_world('bounds',bounds,'N_obstacles',N_obstacles,...
         'verbose',verbose_level,'goal_radius',goal_radius,...
@@ -104,7 +104,7 @@ for idx = sim_start_idx:sim_end_idx
         'max_sim_time',170,'max_sim_iterations',80,'plot_while_running',plot_simulator_flag) ;
     S.worlds{1} = W;
     S.plot_while_running = false;
-    try
+%     try
         S.run()
         summary = S.simulation_summary ;
 
@@ -112,13 +112,16 @@ for idx = sim_start_idx:sim_end_idx
         save_filename = [save_file_location,'trial_',num2str(N_obstacles),'_',num2str(idx,'%03.f')] ;
 
         if save_summaries_flag
-            save(save_filename,'A_together','W','P_together','S','summary')
+            parsave(save_filename,'W','P_together','summary')
         end
 
-    catch ME
-         disp('simulator errored!')
-         continue;
-    end
+%     catch ME
+%          disp('simulator errored!')
+%          continue;
+%     end
     
 end
+end
+function parsave(fname, x,y,z)
+save(fname, 'x', 'y','z')
 end

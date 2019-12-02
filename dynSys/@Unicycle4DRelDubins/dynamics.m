@@ -8,7 +8,27 @@ if numel(u) ~= obj.nu
 end
 
 
-if iscell(x)
+if ~iscell(x)
+    delx=x(1);
+  dely=x(2);
+  ther=x(3);
+  v   =x(4);
+
+  p1  =d(1);
+  p2  =d(2);
+
+  uw  =u(1);
+  uacc  =u(2);
+
+  dx = zeros(obj.nx, 1);
+  dx(1)   = -v.*cos(ther)+p1;
+  dx(2)   = -v.*sin(ther)+p2;
+  dx(3)   = -uw;
+  dx(4)   = -uacc;
+  
+
+
+else
   delx=x{1};
   dely=x{2};
   ther=x{3};
@@ -25,10 +45,9 @@ if iscell(x)
   dx{2}   = -v.*sin(ther)+p2;
   dx{3}   = -uw;
   dx{4}   = -uacc;
+  display("Cell type !")
 
-
-else
-  error('state not cell type')
+  
 end
 
 

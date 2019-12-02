@@ -2,13 +2,13 @@ close all; clear
 TEB= zeros(10, 1)
 spds= zeros(10, 1)
 v_maxmax = 1.5;
-plan_spd = 0.6;
+plan_spd = 0.3;
 T_interval = 10;
 dist = T_interval * plan_spd;
 n = 10;
 % for i = 3: n
 % spd = i*v_maxmax/n;
- spd = 3;
+ spd = 100;
 A = fastrack_agent;
 A.LLC.TEB.sD.dynSys.v_max = spd;
 A.use_performance = 0; 
