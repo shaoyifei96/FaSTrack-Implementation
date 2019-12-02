@@ -21,10 +21,10 @@ if iscell(x)
   uacc  =u{2};
 
   dx = cell(obj.nx, 1);
-  dx{1}   = -v.*cos(ther)+p1;
-  dx{2}   = -v.*sin(ther)+p2;
-  dx{3}   = -uw;
-  dx{4}   = -uacc;
+  dx{1}   = v.*cos(ther)+p1;
+  dx{2}   = v.*sin(ther)+p2;
+  dx{3}   = uw;
+  dx{4}   = uacc;
 
 
 else

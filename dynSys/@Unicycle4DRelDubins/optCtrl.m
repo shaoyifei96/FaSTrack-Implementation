@@ -15,9 +15,9 @@ end
 	if strcmp(uMode, 'min')
 	uOpt = cell(obj.nu, 1);
     
-	uOpt{1} =obj.w_max     * sign(deriv{3});
+	uOpt{1} = obj.w_max * -sign(deriv{3});
 	%uOpt{2} =(x{4}<-1)*obj.a_max+(x{4}>1) *-obj.a_max +(abs(x{4})<=1)*obj.a_max .* sign(deriv{4});
-    uOpt{2} =(x{4}<-obj.max_spd)*obj.a_max+(x{4}>obj.max_spd ) *-obj.a_max +(abs(x{4})<=obj.max_spd )*obj.a_max .* sign(deriv{4});
+    uOpt{2} =(x{4}<-obj.max_spd)*obj.a_max+(x{4}>obj.max_spd ) *-obj.a_max +(abs(x{4})<=obj.max_spd )*obj.a_max .* -sign(deriv{4});
     % uOpt{1} = deriv{3} ./ normalizer * obj.a_max_;
     % uOpt{2} = deriv{4} ./ normalizer * obj.a_max_;
 
