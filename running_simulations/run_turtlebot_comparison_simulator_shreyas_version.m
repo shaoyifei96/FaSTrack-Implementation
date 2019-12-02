@@ -10,12 +10,12 @@
 %
 %% user parameters
 % agent
-desired_speed = 0.2; % m/s
+desired_speed = 0.6; % m/s
 
 
 % world
 obstacle_size_bounds = [0.2, 0.3] ; % side length [min, max]
-N_obstacles = 10 ;
+N_obstacles = 3;
 bounds = [-6,6,-2,2] ;
 goal_radius = 0.5 ;
 
@@ -52,8 +52,9 @@ save_file_location = './' ;
 %% automated from here
 A1 =  turtlebot_agent;
 A2 = fastrack_agent ;
-A2.LLC.TEB.sD.dynSys.v_max = 0.45;
-A2.LLC.TEB.TEB = 0.45;
+A2.LLC.TEB.sD.dynSys.v_max =100;
+A2.LLC.TEB.TEBadj = 0.6;
+A2.LLC.TEB.TEB = 0.6;
 % tried both ode4 and ode 113, all don't work really well, also produce
 % unsmooth trajectory. Part of the reason is due to that fastrack is just a
 % safety controller, there needs to be a performance controller working together
@@ -84,7 +85,8 @@ P2 = turtlebot_RRT_planner('verbose',verbose_level,'buffer',buffer,...
     'HLP_grow_tree_mode',HLP_grow_tree_mode) ;
 
 P_together = {P1  P2} ;
-% P_together = P1 ;
+P_together = P2 ;
+A_together = A2 ;
 % P_together = P2 ;
 
 

@@ -9,11 +9,11 @@ clear ; clc ;
 %
 %% user parameters
 % agent
-desired_speed = 1 ; % m/s
+desired_speed = 0.6 ; % m/s
 
 % world
 obstacle_size_bounds = [0.2, 0.3] ; % side length [min, max]
-N_obstacles = 10 ;
+N_obstacles = 5 ;
 bounds = [-10,10,-6,6] ;
 goal_radius = 0.5 ;
 

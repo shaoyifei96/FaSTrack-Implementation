@@ -1,25 +1,24 @@
 close all; clear
-load Dubin4D1.5_0.6_40_low.mat
 TEB= zeros(10, 1)
 spds= zeros(10, 1)
 v_maxmax = 1.5;
 plan_spd = 0.6;
-T_interval = 5;
+T_interval = 10;
 dist = T_interval * plan_spd;
 n = 10;
 % for i = 3: n
 % spd = i*v_maxmax/n;
- spd = 0.6;
+ spd = 3;
 A = fastrack_agent;
 A.LLC.TEB.sD.dynSys.v_max = spd;
 A.use_performance = 0; 
 T = [0 T_interval 2*T_interval 3*T_interval ];
 U = zeros(A.n_inputs,length(T));
-Z = [0 dist dist dist ; 0 0 dist dist; 0 0 0 0 ; plan_spd plan_spd plan_spd 0 ];
+Z = [0 dist dist dist ; 0 0 dist 0; 0 0 0 0 ; plan_spd plan_spd plan_spd plan_spd ];
 A.move(T(end) -1,T,U,Z);
 % spds(i) = spd;
 % TEB(i) = A.TEB_max;
-%%
+
 
  
   figure(1) ; axis equal ; hold on ; grid on ;

@@ -1,6 +1,6 @@
 
 % [g3D, data3D] = proj(sD.grid,data,[0 0 0],'min');
-[g3D, data3D] = proj(sD_X.grid,dataX,[0 0 0 1],'min');
+[g3D, data3D] = proj(sD.grid,data,[0 0 0 1],'min');
 %%
 close all; 
 
@@ -9,7 +9,7 @@ close all;
 %     h0 = visSetIm(g3D, sqrt(data03D), 'blue', levels(1)+small);
 %     h0.FaceAlpha = alpha;
     hold on
-    levels= [0;0; 4
+    levels= [0;0; 0.84
         ]
     theta=0:0.01:2*pi;
     x=0.2*sin(theta);

@@ -6,9 +6,9 @@ classdef fastrack_LLC < low_level_controller
         accel_gain = 0 ;
         yaw_gain = 0 ;
         yaw_rate_gain = 1 ; %not useful constants for fastrack
-        TEB = load("Dubin4D1.5_43_veryHigh_manydays.mat");
+        TEB = load("Dubin4D1.5_0.6_40_low_pos_chaser.mat");
         Q = [1 0; 0 1; 0 0; 0 0];
-        TEBadj = 0.37;
+        TEBadj = 1.0;
         
         
     end
