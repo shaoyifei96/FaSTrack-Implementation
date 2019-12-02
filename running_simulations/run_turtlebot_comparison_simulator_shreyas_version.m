@@ -8,7 +8,7 @@
 % Updated: 30 Oct 2019
 % Updated by Simon: 18 Nov 2019
 %
-obs_array = [5  8 12];
+obs_array = [10  12 15];
 for iii = 1:3
     N_obstacles= obs_array(iii);
 %% user parameters
@@ -55,8 +55,8 @@ save_file_location = './' ;
 A1 =  turtlebot_agent;
 A2 = fastrack_agent ;
 A2.LLC.TEB.sD.dynSys.v_max =100;
-A2.LLC.TEB.TEBadj = 0.4;
-A2.LLC.TEB.TEB = 0.4;
+A2.LLC.TEB.TEBadj = 0.25;
+A2.LLC.TEB.TEB = 0.25;
 % tried both ode4 and ode 113, all don't work really well, also produce
 % unsmooth trajectory. Part of the reason is due to that fastrack is just a
 % safety controller, there needs to be a performance controller working together

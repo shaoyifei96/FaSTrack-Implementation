@@ -24,7 +24,7 @@ file_name_arr = [];
 for file_idx = 1:length(files)
     file_name = files(file_idx).name ;
 
-    if length(file_name) > 3 && strcmpi(file_name(end-2:end),'mat') &&strcmpi(file_name(1:5),'trial')
+    if length(file_name) > 3 && strcmpi(file_name(end-2:end),'mat') &&strcmpi(file_name(1:8),'trial_15')
         data = load(files(file_idx).name) ;
         summary = data.summary ;
         
@@ -65,12 +65,11 @@ for idx = 1:n_planners
 end
 
 %% plot any RTD crashes
-RTD_crash_idxs = find(collisions(1,:)>0) ;
-max(collisions)
+RTD_crash_idxs = find(collisions(  1,:)>0) 
 
 % for idx = RTD_crash_idxs
 % file_idx = 57 ;
-data = load(files(file_idx).name) ;
+data = load(files(RTD_crash_idxs).name) ;
 summary = data.summary ;
 %%
  A = turtlebot_agent ;
