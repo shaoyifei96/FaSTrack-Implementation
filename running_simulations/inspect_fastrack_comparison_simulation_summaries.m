@@ -24,7 +24,7 @@ file_name_arr = [];
 for file_idx = 1:length(files)
     file_name = files(file_idx).name ;
 
-    if length(file_name) > 3 && strcmpi(file_name(end-2:end),'mat') &&strcmpi(file_name(1:8),'trial_10')
+    if length(file_name) > 3 && strcmpi(file_name(end-2:end),'mat') &&strcmpi(file_name(1:8),'trial_15')
         data = load(files(file_idx).name) ;
         summary = data.summary ;
         

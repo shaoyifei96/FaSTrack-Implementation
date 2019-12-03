@@ -112,7 +112,11 @@ parfor idx = sim_start_idx:sim_end_idx
         save_filename = [save_file_location,'trial_',num2str(N_obstacles),'_',num2str(idx,'%03.f')] ;
 
         if save_summaries_flag
-            parsave(save_filename,'W','P_together','summary')
+            C= struct;
+            C.A= A_together;
+            C.P = P_together;
+            C.summary = summary;
+            parsave(save_filename,W,A_together,P_together,summary)
         end
 
 %     catch ME
@@ -122,6 +126,9 @@ parfor idx = sim_start_idx:sim_end_idx
     
 end
 end
-function parsave(fname, x,y,z)
-save(fname, 'x', 'y','z')
+function parsave_simple(fname,C )
+    save('-mat',fname,'C');
+end
+function parsave(fname, W,A_together,P_together,summary)
+save(fname, 'W','A_together','P_together','summary')
 end
