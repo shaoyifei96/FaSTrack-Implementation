@@ -3,13 +3,16 @@
 % This script runs a simulation with the TurtleBot in the simulator
 % framework, using RRT* to plan online.
 %
+%can use parallel computing to make things go faster, but RTD cannot run parallel since it has curly braces in { } in the dynamics. 
+%parfor only support brackets()
+%
 % Author: Shreyas Kousik and Simon Shao
 % Created: 19 Oct 2019
 % Updated: 30 Oct 2019
 % Updated by Simon: 18 Nov 2019
 %
-obs_array = [15  16 18];
-for iii = 1:3
+obs_array = [8 12 15];
+for iii = 1:length(obs_array)
     N_obstacles= obs_array(iii);
 %% user parameters
 % agent
@@ -37,12 +40,12 @@ t_move = 0.5 ; %making these values big will make the controller not work for so
 % turtlebot RRT planner parameters
 initialize_tree_mode = 'once' ; % 'iter' or 'once'
 HLP_grow_tree_mode = 'new' ; % 'new' or 'seed' or 'keep' (only matters if using 'iter' above)
-grow_tree_once_timeout = 6 ;
+grow_tree_once_timeout = 4;
 HLP_type = 'RRT*' ; % 'rrt' or 'rrt*' or 'connect' or 'connect*'
 
 % simulation
 sim_start_idx = 1;
-sim_end_idx = 100 ;
+sim_end_idx = 150 ;
 verbose_level = 0 ;
 plot_HLP_flag = true ;
 plot_simulator_flag = true;
@@ -87,24 +90,22 @@ P2 = turtlebot_RRT_planner('verbose',verbose_level,'buffer',buffer,...
     'HLP_grow_tree_mode',HLP_grow_tree_mode) ;
 
 P_together = {P1  P2} ;
+% A_together = A2 ;
 % P_together = P2 ;
-A_together = A2 ;
-P_together = P2 ;
 
 
 %% run many simulations
-parfor idx = sim_start_idx:sim_end_idx
+for idx = sim_start_idx:sim_end_idx
     idx
     W = static_box_world('bounds',bounds,'N_obstacles',N_obstacles,...
         'verbose',verbose_level,'goal_radius',goal_radius,...
         'obstacle_size_bounds',obstacle_size_bounds,...
         'buffer',buffer) ;
-    %     W = data.W ;
+%         W = data.W ;
     S = simulator(A_together,W,P_together,'allow_replan_errors',false,'verbose',verbose_level,...
-        'max_sim_time',170,'max_sim_iterations',80,'plot_while_running',plot_simulator_flag) ;
+        'max_sim_time',100,'max_sim_iterations',80,'plot_while_running',plot_simulator_flag) ;
     S.worlds{1} = W;
-    S.plot_while_running = false;
-%     try
+     try
         S.run()
         summary = S.simulation_summary ;
 
@@ -112,17 +113,16 @@ parfor idx = sim_start_idx:sim_end_idx
         save_filename = [save_file_location,'trial_',num2str(N_obstacles),'_',num2str(idx,'%03.f')] ;
 
         if save_summaries_flag
-            C= struct;
-            C.A= A_together;
-            C.P = P_together;
-            C.summary = summary;
             parsave(save_filename,W,A_together,P_together,summary)
         end
 
-%     catch ME
-%          disp('simulator errored!')
-%          continue;
-%     end
+    catch ME
+        save_filename = [save_file_location,'trial_',num2str(N_obstacles),'_',num2str(idx,'%03.f'),'ERROR'] ;
+         disp('simulator errored!')
+         summary = struct;
+         parsave(save_filename,W,A_together,P_together,summary)
+         continue;
+    end
     
 end
 end
@@ -130,5 +130,5 @@ function parsave_simple(fname,C )
     save('-mat',fname,'C');
 end
 function parsave(fname, W,A_together,P_together,summary)
-save(fname, 'W','A_together','P_together','summary')
+save(fname, 'W','A_together','P_together','summary','-v7.3')
 end

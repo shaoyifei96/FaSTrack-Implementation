@@ -21,17 +21,19 @@ time_to_goal = [] ;
 file_name_arr = [];
 
 %% load and extract data
+file_name_contains = 'trial_8';
+N_obs = '8';
 for file_idx = 1:length(files)
     file_name = files(file_idx).name ;
 
-    if length(file_name) > 3 && strcmpi(file_name(end-2:end),'mat') &&strcmpi(file_name(1:8),'trial_15')
+    if length(file_name) > 3 && strcmpi(file_name(end-2:end),'mat') &&strcmpi(file_name(1:length(file_name_contains)),file_name_contains)
         data = load(files(file_idx).name) ;
         summary = data.summary ;
         
         % add a column to the data
         n_planners = length(summary) ;
         goals = [goals, nan(n_planners,1)];
-        file_name_arr = [file_name_arr; file_name];
+        file_name_arr = [file_name_arr; {file_name}];
         collisions = [collisions, nan(n_planners,1)] ;
         peak_speed = [peak_speed, nan(n_planners,1)] ;
         time_to_goal = [time_to_goal, nan(n_planners,1)] ;
@@ -42,7 +44,12 @@ for file_idx = 1:length(files)
             coll = summary(idx).collision_check ;
             collisions(idx,end) = coll;
             peak_speed(idx,end) = max(summary(idx).trajectory(4,:)) ;
+            if summary(idx).goal_check == 1 
             time_to_goal(idx,end) = summary(idx).total_simulated_time(end) ;
+            else 
+           time_to_goal(idx,end) =0 ;
+            end
+            
         end
         
         % increment
@@ -55,12 +62,14 @@ for file_idx = 1:length(files)
 end
 
 %% analyze data
+summary(1).agent_name = 'RTD_agent';
 for idx = 1:n_planners
+    disp(['Number of Obstacles = ',num2str(N_obs)])
     disp(summary(idx).agent_name)
     disp(['Goals: ',num2str(100*sum(goals(idx,:))/N_trials,'%0.1f'),' %'])
     disp(['Collisions: ',num2str(100*sum(collisions(idx,:))/N_trials,'%0.1f'),' %'])
     disp(['Peak Speed: ',num2str(mean(peak_speed(idx,:)),'%0.1f'),' m/s'])
-    disp(['Time to Goal: ',num2str(mean(time_to_goal(idx,:),'omitnan'),'%0.1f'),' s'])
+    disp(['Time to Goal: ',num2str(sum(time_to_goal(idx,:))/sum(goals(idx,:),'omitnan'),'%0.1f'),' s'])
     disp(' ')
 end
 
@@ -80,10 +89,14 @@ A.time = summary(1).agent_info.time ;
 % 
 % % set up world
 W = static_box_world() ;
+W.obstacles = summary(1).obstacles ;
 W.start = summary(1).start ;
 W.goal = summary(1).goal ;
-W.obstacles = summary(1).obstacles ;
+W.bounds = summary(1).bounds ;
+
 W.obstacles_seen = W.obstacles ; 
+
+
 % 
 % % plot
 figure(1) ; clf ; axis equal ; hold on
@@ -98,8 +111,10 @@ A.time = summary(2).agent_info.time ;
 % 
 % % set up world
 W = static_box_world() ;
+W.bounds = summary(1).bounds ;
 W.start = summary(2).start ;
 W.goal = summary(2).goal ;
+
 W.obstacles = summary(2).obstacles ;
 W.obstacles_seen = W.obstacles ; 
 % 

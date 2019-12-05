@@ -44,7 +44,7 @@ for idx = 3:length(files)
         % load the summary
         data = load(files(idx).name) ;
         summary = data.summary ;
-        
+        %%
         % make a fastrack agent
         A = fastrack_agent ;
         A.sensor_radius = sensor_radius ;
