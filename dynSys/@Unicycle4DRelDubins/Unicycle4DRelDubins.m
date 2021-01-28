@@ -8,12 +8,13 @@ classdef Unicycle4DRelDubins < DynSys
     %hi d model limits
     a_max%same acc +/-
     w_max %same angular v +/-
-    v_max
+    
+    max_spd
 
   end
 
   methods
-    function obj = Unicycle4DRelDubins(x, a_max, w_max, p1_lim, p2_lim,v_max)
+    function obj = Unicycle4DRelDubins(x, a_max, w_max, p1_lim, p2_lim,max_spd)
       % obj = Mass4DRelDubins(x, Mass4D, KinVeh2D)
       %
       % Constructor. Creates the dynamical system object with state x and
@@ -41,18 +42,17 @@ classdef Unicycle4DRelDubins < DynSys
       obj.w_max = w_max
 
       obj.p1_lim = p1_lim
-      
       obj.p2_lim = p2_lim
+      obj.max_spd = max_spd
 
       obj.pdim = [1,2];% position dimensions
       obj.hdim = [3];% heading dimensions
       obj.vdim = [4];% velocity dimensions
-    
-      obj.v_max = v_max;
-      
+
       obj.nx = 4;
       obj.nu = 2;
       obj.nd = 2;
+      
     end
 
   end % end methods

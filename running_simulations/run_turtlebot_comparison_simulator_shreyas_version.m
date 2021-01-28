@@ -11,7 +11,7 @@
 % Updated: 30 Oct 2019
 % Updated by Simon: 18 Nov 2019
 %
-obs_array = [8 12 15];
+obs_array = [15];
 for iii = 1:length(obs_array)
     N_obstacles= obs_array(iii);
 %% user parameters
@@ -105,7 +105,7 @@ for idx = sim_start_idx:sim_end_idx
     S = simulator(A_together,W,P_together,'allow_replan_errors',false,'verbose',verbose_level,...
         'max_sim_time',100,'max_sim_iterations',80,'plot_while_running',plot_simulator_flag) ;
     S.worlds{1} = W;
-     try
+     %try
         S.run()
         summary = S.simulation_summary ;
 
@@ -116,13 +116,13 @@ for idx = sim_start_idx:sim_end_idx
             parsave(save_filename,W,A_together,P_together,summary)
         end
 
-    catch ME
-        save_filename = [save_file_location,'trial_',num2str(N_obstacles),'_',num2str(idx,'%03.f'),'ERROR'] ;
-         disp('simulator errored!')
-         summary = struct;
-         parsave(save_filename,W,A_together,P_together,summary)
-         continue;
-    end
+%     catch ME
+%         save_filename = [save_file_location,'trial_',num2str(N_obstacles),'_',num2str(idx,'%03.f'),'ERROR'] ;
+%          disp('simulator errored!')
+%          summary = struct;
+%          parsave(save_filename,W,A_together,P_together,summary)
+%          continue;
+%     end
     
 end
 end

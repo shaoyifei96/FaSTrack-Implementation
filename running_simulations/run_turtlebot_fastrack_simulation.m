@@ -11,7 +11,7 @@ clear ; clc ;
 %% user parameters
 % world
 obstacle_size_bounds = [0.2, 0.3] ; % side length [min, max]
-N_obstacles = 0 ;
+N_obstacles = 10 ;
 bounds = [-4,4,-2,2] ;
 goal_radius = 0.5 ;
 

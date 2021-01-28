@@ -2,27 +2,28 @@
 %4d system  tracking 2D rrt
 w_max = 2; % rad/s
 acc_max = 2;
-p1_limit = 0.2;
-p2_limit = 0.2;
+p1_limit = 0.6;
+p2_limit = 0.6;
 %%
 % default to more grid points in x and y than in theta
 % if nargin < 1
     % number of grid points (more grid points --> better results, but
     % slower computation)
-    gN = ones(4, 1)*30;
+    gN = ones(4, 1)*40;
 % end
 
 % default to visualizing
 % if nargin < 2
     visualize = 1;
 
+   max_spd = 2;
 
 %% Grid and cost
 
 % grid bounds in x, y, theta (relative dynamics)
 
-gMin = [-1.5; -1.5; -pi;  -1; ];
-gMax = [1.5 ; 1.5 ;  pi;  1; ];
+gMin = [-1.5; -1.5; -pi;  -max_spd; ];
+gMax = [1.5; 1.5 ;  pi;  max_spd; ];
 
 % create grid with 3rd dimension periodic
 sD.grid = createGrid(gMin, gMax, gN,3);
@@ -80,7 +81,7 @@ end
 
 % create relative dynamics
 %P3D_Q2D_Rel(x, uMin, uMax, pMin, pMax, dMin, dMax, v, dims)
-sD.dynSys = Unicycle4DRelDubins([0, 0, 0,0],acc_max, w_max, p1_limit, p2_limit);
+sD.dynSys = Unicycle4DRelDubins([0, 0, 0,0],acc_max, w_max, p1_limit, p2_limit,max_spd);
 
 %% Otherparameters
 
@@ -127,7 +128,7 @@ dt = 0.1;
 
 % upper bound on how long the code can keep going (hopefully converges far
 % before this time)
-tMax = 100;
+tMax = 40;
 
 % time stamps
 tau = 0:dt:tMax;
@@ -136,7 +137,7 @@ tau = 0:dt:tMax;
 extraArgs.stopConverge = true;
 
 % convergence threshold
-extraArgs.convergeThreshold = 0.01;
+extraArgs.convergeThreshold = 0.04;
 
 % only keep the most recently computed data
 extraArgs.keepLast = 1;
@@ -154,7 +155,7 @@ runtime = toc;
 
 % Get TEB
 small = .1;
-TEB = min(sqrt(data(:)))+small;
+TEB =sqrt( min((data(:))));
 
 if visualize
     
@@ -278,7 +279,7 @@ planner_data.p1_limit  = p1_limit;
 planner_data.p2_limit = p2_limit;
 deriv = computeGradients(sD.grid,data);
 
-save(['Dubin4D1mpers_tMax_converge.mat'], 'TEB','sD', 'data','deriv','planner_data','-v7.3');
+save(['Dubin4D2.0_0.6_40_high.mat'], 'TEB','sD', 'data','deriv','planner_data','-v7.3');
 
 
 %%h0 = visSetIm(g3D, sqrt(data03D), 'blue', levels(1)+small);
