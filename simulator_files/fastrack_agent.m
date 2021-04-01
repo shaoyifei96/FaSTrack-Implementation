@@ -22,20 +22,20 @@ classdef fastrack_agent < RTD_agent_2D
         TEB_max = 0;
         ending_state = NaN;
         SIGKILL = 0;
-        use_performance = 1;
+        use_performance = 0;
         
     end
     
     methods
         %% constructor
-        function A = fastrack_agent(varargin)
+        function A = fastrack_agent(TEB,varargin)
             % set up default superclass values
             default_footprint = 0.35/2 ;
             n_states = 4 ;
             n_inputs = 2 ;
             stopping_time = 1 ;
             sensor_radius = 1000 ;
-            LLC =  fastrack_LLC;
+            LLC =  fastrack_LLC(TEB);
             LLCP = turtlebot_PD_LLC ;
             
             % create agent

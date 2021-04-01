@@ -57,7 +57,7 @@ save_file_location = './' ;
 %% automated from here
 A1 =  turtlebot_agent;
 A2 = fastrack_agent ;
-A2.LLC.TEB.sD.dynSys.v_max =1.5;
+% A2.LLC.TEB.sD.dynSys.v_max =1.5;
 A2.LLC.TEB.TEBadj = 0.25;
 A2.LLC.TEB.TEB = 0.25;
 % tried both ode4 and ode 113, all don't work really well, also produce

@@ -1,15 +1,23 @@
 %% user parameters
 % agent
+close all
 desired_speed = 1 ; % m/s
+if ~exist('TEB_data','var')
+    disp('Loading frs')
+    TEB_data = load("Dubin4D2.0_0.3_40_vhigh_debugged.mat");
+    avoid_data = load("avoid_fun_box_data.mat");
+else
+    disp('TEB already loaded') ;
+end
 
 % world
 obstacle_size_bounds = [0.2, 0.3] ; % side length [min, max]
-N_wall_obstacles = 5 ;
-bounds = [-4,4,-2,2] ;
-start = [-3;0] ;
-goal = [3.5;0] ;
+% N_wall_obstacles = 5 ;
+bounds = [-5,5,-5,5] ;
+start = [2.5;2] ;
+goal = [4;4] ;
 goal_radius = 0.5 ;
-box_size = 0.25 ;
+box_size = 1 ;
 
 % planner time limits  
 t_plan = 0.5 ;
@@ -29,10 +37,11 @@ save_file_location = '~/MATLAB/fastrack_comparison_data/' ;
 %% (automated from here) make agents
 % make agents
 A_RTD =  turtlebot_agent;
-A_FTK = fastrack_agent ;
-
+A_FTK = fastrack_agent(TEB_data) ;
+A_FTK_avoid = fastrack_agent([]) ;
+A_FTK_avoid.LLC = fastrack_avoid_LLC(avoid_data);
 % make agent cell array for simulator
-A = {A_FTK, A_RTD, A_RTD} ;
+A = {A_FTK, A_FTK_avoid,A_RTD, A_RTD} ;
 
 %% make planners
 % fastrack params
@@ -40,6 +49,10 @@ fastrack_buffer = A_FTK.LLC.TEB.TEB + A_FTK.footprint ;
 
 % fastrack planner
 P_FTK = turtlebot_RRT_planner('verbose',verbose_level,'buffer',fastrack_buffer,...
+    't_plan',t_plan,'t_move',t_move,'desired_speed',desired_speed,...
+    'plot_HLP_flag',plot_HLP_flag) ;
+
+P_FTK_avoid = turtlebot_RRT_planner('verbose',verbose_level,'buffer',fastrack_buffer,...
     't_plan',t_plan,'t_move',t_move,'desired_speed',desired_speed,...
     'plot_HLP_flag',plot_HLP_flag) ;
 
@@ -54,7 +67,7 @@ P_RTD_2 = turtlebot_RTD_planner_static('verbose',verbose_level,'buffer',RTD_buff
                                  'plot_HLP_flag',plot_HLP_flag) ;
 
 % make planner input
-P = {P_FTK, P_RTD_1, P_RTD_2} ;
+P = {P_FTK, P_FTK_avoid, P_RTD_1, P_RTD_2} ;
 
 %% make world
 W = static_box_world('bounds',bounds,'N_obstacles',0,...
@@ -68,16 +81,22 @@ ylo = W.bounds(3) + fastrack_buffer ;
 yhi = W.bounds(4) - fastrack_buffer ;
 
 % make list of obstacle centers
-c = linspace(ylo,yhi,N_wall_obstacles) ;
+% enters = {[-1,-2], [-0.5, -0.5], [2, 3], [1,0]};
+c = [[-1,-2]; [-0.5, -0.5]; [2, 3]; [1,0]];
 O = [] ;
-for idx = 1:N_wall_obstacles
-    o = make_box(box_size) + repmat([W.goal(1);0] + [-1;c(idx)],1,5) ;
+% for idx = 1:N_wall_obstacles
+%     o = make_circle(1,30,c(1,:)); %+ repmat([W.goal(1);0] + [-1;c(idx)],1,5) ;
+%     O = [O, nan(2,1), o] ;
+% end
+for idx = 1:size(c,1)
+    o = make_box(box_size,c(idx,:)); %+ repmat([W.goal(1);0] + [-1;c(idx)],1,5) ;
     O = [O, nan(2,1), o] ;
 end
 O = O(:,2:end) ;
 
 W.obstacles = O ;
-W.N_obstacles = N_wall_obstacles ;
+W.N_obstacles = 4;
+% W.N_obstacles = N_wall_obstacles ;
 W.setup() ;
 
 %% run FTK simulation

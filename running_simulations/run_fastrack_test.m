@@ -1,6 +1,6 @@
 close all; clear
-TEB= zeros(10, 1)
-spds= zeros(10, 1)
+TEB= zeros(10, 1);
+spds= zeros(10, 1);
 v_maxmax = 1.5;
 plan_spd = 0.3;
 T_interval = 10;
