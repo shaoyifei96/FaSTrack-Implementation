@@ -8,7 +8,7 @@ classdef fastrack_LLC < low_level_controller
         yaw_rate_gain = 1 ; %not useful constants for fastrack
         TEB;% = load("Dubin4D2.0_0.3_40_vhigh_debugged.mat");
         Q = [1 0; 0 1; 0 0; 0 0];
-        TEBadj = 1.0;
+        TEBadj = 0.21;
         
         
     end
@@ -68,6 +68,7 @@ classdef fastrack_LLC < low_level_controller
              
              rel_z = z_cur - z_des;% find relative state SS
              %rel_z=[0.5;0.1;0;0];
+             TEB_exp = sqrt((rel_z(1)^2+rel_z(2)^2));
 %              TEB_exp = ; %make sure relative state doesn't exceed
              %teb, since we are choosing the next planned state, it can be
              %arbitarily close to the previous one to ensure our teb lookup

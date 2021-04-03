@@ -19,10 +19,10 @@ classdef fastrack_agent < RTD_agent_2D
         max_yaw_rate = 2.0 ; % rad/s
         max_accel = 2.0 ; % m/s^2
         LLCP
-        TEB_max = 0;
+%         TEB_max = 0;
         ending_state = NaN;
         SIGKILL = 0;
-        use_performance = 0;
+        use_performance;
         
     end
     
@@ -95,16 +95,26 @@ classdef fastrack_agent < RTD_agent_2D
             
             % get nominal control inputs
             [u_s, TEB_exp] = A.LLC.get_control_inputs(A,t,z,T,U,Z);
-            if (TEB_exp) > A.TEB_max
-                A.TEB_max = TEB_exp;
-            end
+%             if (TEB_exp) > A.TEB_max
+%                 A.TEB_max = TEB_exp;
+%             end
+%           in fastrack, normalizer always < 1, if close to 1 , then use
+%           safety controller.
+%           In avoid set, normalizer always > 1, if close to 1, then use
+%           safety cotnroller
+
+            TEB_exp
             normalizer = TEB_exp /A.LLC.TEBadj;
             u_p = A.LLCP.get_control_inputs(A,t,z,T,U,Z);
-            if A.use_performance
-                u = ( normalizer> 0.8) * u_s + (normalizer< 0.8)*(u_s * normalizer + u_p* (1-normalizer));
-            else
-                
+            if A.use_performance == "Fastrack"
+                u = ( normalizer> 0.8) * u_s + (normalizer<= 0.8)*(u_s * normalizer + u_p* (1-normalizer));
+            elseif A.use_performance == "Avoid"
+                u = ( normalizer< 1) * (u_s * 0.7 + u_p* 0.3) + (normalizer>= 1)* u_p;
+
+            elseif A.use_performance == "OFF"
                 u = u_s ; % uncomment for safety only
+            else
+                error("Unrecognized use_performance flag");
             end
             %u = u_p ; % uncomment for performance only
             
@@ -121,6 +131,9 @@ classdef fastrack_agent < RTD_agent_2D
             xd = v*cos(h) ;
             yd = v*sin(h) ;
             hd = w ;
+            if v >= A.max_speed - 0.2
+                a = -0.1; %slow down if speed too fast
+            end
             vd = a ;
             
             % return state derivative

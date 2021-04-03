@@ -14,7 +14,7 @@ end
 obstacle_size_bounds = [0.2, 0.3] ; % side length [min, max]
 % N_wall_obstacles = 5 ;
 bounds = [-5,5,-5,5] ;
-start = [2.5;2] ;
+start = [-4;-4] ;
 goal = [4;4] ;
 goal_radius = 0.5 ;
 box_size = 1 ;
@@ -38,21 +38,29 @@ save_file_location = '~/MATLAB/fastrack_comparison_data/' ;
 % make agents
 A_RTD =  turtlebot_agent;
 A_FTK = fastrack_agent(TEB_data) ;
-A_FTK_avoid = fastrack_agent([]) ;
+A_FTK.use_performance = "Fastrack";
+A_FTK.LLC.TEBadj = 0.21; %Acoording to slides shared last meeting, with this loaded file. TEB limit is at 0.21m
+A_FTK.LLCP.gains.acceleration = 1.5;
+% so if planner and dynamics gets too far away, use safety controller.
+A_FTK_avoid = fastrack_agent([]) ; % Use the same agent for avoid formulation as well.
+% Since most things are the same, except the limit is opposite, If value
+% function less than 1+footprint, it is too close to obstacles.
 A_FTK_avoid.LLC = fastrack_avoid_LLC(avoid_data);
+A_FTL_avoid.LLC.TEBadj = A_FTK_avoid.footprint;
+A_FTK_avoid.use_performance  =  "Avoid";
 % make agent cell array for simulator
 A = {A_FTK, A_FTK_avoid,A_RTD, A_RTD} ;
 
 %% make planners
 % fastrack params
 fastrack_buffer = A_FTK.LLC.TEB.TEB + A_FTK.footprint ;
-
+avoid_buffer = A_FTK.footprint;
 % fastrack planner
 P_FTK = turtlebot_RRT_planner('verbose',verbose_level,'buffer',fastrack_buffer,...
     't_plan',t_plan,'t_move',t_move,'desired_speed',desired_speed,...
     'plot_HLP_flag',plot_HLP_flag) ;
 
-P_FTK_avoid = turtlebot_RRT_planner('verbose',verbose_level,'buffer',fastrack_buffer,...
+P_FTK_avoid = turtlebot_RRT_planner('verbose',verbose_level,'buffer',avoid_buffer,...
     't_plan',t_plan,'t_move',t_move,'desired_speed',desired_speed,...
     'plot_HLP_flag',plot_HLP_flag) ;
 
@@ -103,4 +111,5 @@ W.setup() ;
 S = simulator(A,W,P,'allow_replan_errors',false,'verbose',verbose_level,...
     'max_sim_time',30,'max_sim_iterations',1000,'plot_while_running',1) ;
 
-S.run(2)
+S.run(2) %1. fastrack, 2. stamped HJB, 3. RTD RRT. 4. RTD straightline
+

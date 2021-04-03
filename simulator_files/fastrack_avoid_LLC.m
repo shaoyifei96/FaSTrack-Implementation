@@ -86,7 +86,8 @@ classdef fastrack_avoid_LLC < low_level_controller
              % controller, but we still get the value of all deriv, which is
              % ok. SS
              TEB_exp = eval_u(LLC.TEB.schemeData.grid, LLC.TEB.Value, z_cur);
-
+             %1 at obstacle, bigger farther away from obs 
+             
              deriv_Intropolated = eval_u(LLC.TEB.schemeData.grid, LLC.TEB.Deriv, z_cur);
              uMode = 'max';
              % this is same controller function as the pursuit game,
