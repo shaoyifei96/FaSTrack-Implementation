@@ -103,13 +103,12 @@ classdef fastrack_agent < RTD_agent_2D
 %           In avoid set, normalizer always > 1, if close to 1, then use
 %           safety cotnroller
 
-            TEB_exp
-            normalizer = TEB_exp /A.LLC.TEBadj;
+            normalizer = TEB_exp /A.LLC.TEBadj
             u_p = A.LLCP.get_control_inputs(A,t,z,T,U,Z);
             if A.use_performance == "Fastrack"
                 u = ( normalizer> 0.8) * u_s + (normalizer<= 0.8)*(u_s * normalizer + u_p* (1-normalizer));
             elseif A.use_performance == "Avoid"
-                u = ( normalizer< 1) * (u_s * 0.7 + u_p* 0.3) + (normalizer>= 1)* u_p;
+                u =( normalizer< 1) * (u_s * 0.5 + u_p* 0.5) + (normalizer>= 1)* u_p;
 
             elseif A.use_performance == "OFF"
                 u = u_s ; % uncomment for safety only
