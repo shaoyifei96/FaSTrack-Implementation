@@ -14,8 +14,8 @@ LevelSet Toolbox: https://www.cs.ubc.ca/~mitchell/ToolboxLS/
 
 ## Modes
 To run simulation, use make_stamped_obs_scene.m 
-1. Fastrack(Simon thinks it really works)
-2. Stamped HJB(Im not so sure, I think most of the time it is avoiding obstacles, but without some gradient towards the goal, the safety controller doesn't always work well?)
+1. Fastrack(Simon thinks it really works, but please make sure)
+2. Stamped HJB(not so sure, I think most of the time it is avoiding obstacles, but without some gradient towards the goal, the safety controller doesn't always point towards the goal. Also boundaries are not setup as obstacles so it can hit boundary. Also need help in deciding when to use safety controller and when to use performance. Also when using a weighted avg between safety and performance, it sometimes gets stuck because those control inputs sum to 0)
 3. RTD with RRT HLP (works)
 4. RTD with straight line HLP (works)
 
