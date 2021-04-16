@@ -5,11 +5,7 @@ classdef fastrack_agent < RTD_agent_2D
         integrator_type = 'ode4' ;
         integrator_time_discretization = 0.1 ; % for ode4
         % state limits
-        max_speed = 2 ; % m/s (NOTE this is higher than in the specs, since
-        % the planner should not command speeds above its
-        % own limit, but the robot is not limited by the
-        % planning algorithm)
-        
+        max_speed = 2 ; % m/s
         % state indices
         speed_index = 4 ;
         
@@ -18,11 +14,11 @@ classdef fastrack_agent < RTD_agent_2D
         % videos, where it can spin and accelerate really fast)
         max_yaw_rate = 2.0 ; % rad/s
         max_accel = 2.0 ; % m/s^2
-        LLCP
+        LLCP %%performance lowerlevel controller mode
 %         TEB_max = 0;
         ending_state = NaN;
         SIGKILL = 0;
-        use_performance;
+        use_performance = "Fastrack"; %flag for mode 1 or 2
         
     end
     
@@ -52,7 +48,7 @@ classdef fastrack_agent < RTD_agent_2D
         % input, as opposed to doing feedback about desired speed
         
         %fastrack has no special stopping condition, act normally as
-        %nothing has happened. SS
+        %nothing has happened. Simon
         function stop(A,t_stop)
             A.SIGKILL = 1 ;
             %             if  isnan(A.ending_state)
@@ -95,21 +91,22 @@ classdef fastrack_agent < RTD_agent_2D
             
             % get nominal control inputs
             [u_s, TEB_exp] = A.LLC.get_control_inputs(A,t,z,T,U,Z);
-%             if (TEB_exp) > A.TEB_max
-%                 A.TEB_max = TEB_exp;
-%             end
+            %safety controller and value function
 %           in fastrack, normalizer always < 1, if close to 1 , then use
 %           safety controller.
-%           In avoid set, normalizer always > 1, if close to 1, then use
-%           safety cotnroller
+%           In avoid set, normalizer always > limit, if close to limit, then use
+%           safety cotnroller. @Jason, you said limit here is 0, could you
+%           make sure?
 
-            normalizer = TEB_exp /A.LLC.TEBadj
+            normalizer = TEB_exp /A.LLC.TEBadj; %bad name but is the threshold, this is set automatically for fastrack LLC, can be manually set for avoid
             u_p = A.LLCP.get_control_inputs(A,t,z,T,U,Z);
+            
             if A.use_performance == "Fastrack"
                 u = ( normalizer> 0.8) * u_s + (normalizer<= 0.8)*(u_s * normalizer + u_p* (1-normalizer));
             elseif A.use_performance == "Avoid"
-                u =( normalizer< 1) * (u_s * 0.5 + u_p* 0.5) + (normalizer>= 1)* u_p;
-
+                limit = 0.2;
+                u =( normalizer < limit) * (u_s * 0.5 + u_p* 0.5) + (normalizer>= limit)* u_p;
+                %Sometimes crashes :(
             elseif A.use_performance == "OFF"
                 u = u_s ; % uncomment for safety only
             else

@@ -41,11 +41,11 @@
 %                       defined over that grid.
 
 % if nargin < 1
-centers = {[-1,-2], [-0.5, -0.5], [2, 3], [1,0]};
+centers = {[-1,-2], [-0.5, -0.5], [2, 3], [1,0]}; %obstacle centers
 % end
 
 % if nargin <2
-radius = 1;
+% radius = 1; %not used
 % end
 
 %% Grid
@@ -68,7 +68,7 @@ pdDims = 3;               % 3rd dimension is periodic
    max_spd = 2;
 % grid bounds in x, y, theta (relative dynamics)
 
-grid_min = [-5; -5; -pi;  -max_spd; ];
+grid_min = [-5; -5; -pi;  -max_spd; ]; %should be size of the state space
 grid_max = [5;  5 ;  pi;  max_spd; ];
 
 % create grid with 3rd dimension periodic
@@ -101,7 +101,7 @@ HJIextraArgs.convergeThreshold = .01;
 % wMax = 1;
 w_max = 2; % rad/s
 acc_max = 2;
-p1_limit = 0;%what to set this?
+p1_limit = 0;%what to set this? 
 p2_limit = 0;
 dCar = Unicycle4DRelDubins([0, 0, 0,0],acc_max, w_max, p1_limit, p2_limit,max_spd);
 

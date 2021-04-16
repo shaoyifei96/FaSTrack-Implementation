@@ -11,6 +11,7 @@
 % Updated: 30 Oct 2019
 % Updated by Simon: 18 Nov 2019
 %
+tebfile=load('Dubin4D2.0_0.3_40_vhigh_debugged.mat');
 obs_array = [15];
 for iii = 1:length(obs_array)
     N_obstacles= obs_array(iii);
@@ -56,7 +57,7 @@ save_file_location = './' ;
 
 %% automated from here
 A1 =  turtlebot_agent;
-A2 = fastrack_agent ;
+A2 = fastrack_agent(tebfile);
 % A2.LLC.TEB.sD.dynSys.v_max =1.5;
 A2.LLC.TEB.TEBadj = 0.25;
 A2.LLC.TEB.TEB = 0.25;

@@ -10,6 +10,7 @@ clear ; clc ;
 %
 %% user parameters
 % world
+tebfile=load('Dubin4D2.0_0.3_40_vhigh_debugged.mat');
 obstacle_size_bounds = [0.2, 0.3] ; % side length [min, max]
 N_obstacles = 10 ;
 bounds = [-4,4,-2,2] ;
@@ -29,7 +30,7 @@ verbose_level = 5 ;
 plot_HLP_flag = true ;
 
 %% automated from here
-A = fastrack_agent ;
+A = fastrack_agent (tebfile);
 
 buffer = A.LLC.TEB.TEB + A.footprint ;
 

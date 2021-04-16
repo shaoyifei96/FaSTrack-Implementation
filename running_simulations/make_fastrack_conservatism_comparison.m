@@ -1,7 +1,7 @@
 %% user parameters
 % agent
 desired_speed = 1 ; % m/s
-
+tebfile=load('Dubin4D2.0_0.3_40_vhigh_debugged.mat');
 % world
 obstacle_size_bounds = [0.2, 0.3] ; % side length [min, max]
 N_wall_obstacles = 5 ;
@@ -29,7 +29,8 @@ save_file_location = '~/MATLAB/fastrack_comparison_data/' ;
 %% (automated from here) make agents
 % make agents
 A_RTD =  turtlebot_agent;
-A_FTK = fastrack_agent ;
+A_FTK = fastrack_agent(tebfile) ;
+A_FTK.integrator_type = 'ode45';
 
 % make agent cell array for simulator
 A = {A_FTK, A_RTD, A_RTD} ;
@@ -84,4 +85,4 @@ W.setup() ;
 S = simulator(A,W,P,'allow_replan_errors',false,'verbose',verbose_level,...
     'max_sim_time',30,'max_sim_iterations',1000,'plot_while_running',1) ;
 
-S.run(2)
+S.run(1)

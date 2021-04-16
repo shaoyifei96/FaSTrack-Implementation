@@ -11,10 +11,12 @@ n = 10;
 % spd = i*v_maxmax/n;
  spd = 100;
 A = fastrack_agent(tebfile);
+% A.integrator_type = 'ode45';
 A.LLC.TEB.sD.dynSys.max_spd = spd;
-A.use_performance = 0; 
 T = [0 T_interval 2*T_interval 3*T_interval ];
 U = zeros(A.n_inputs,length(T));
+%set reference Z as 4 states, with planning speed, so it should intropolate
+%properly between reference points, and not too fast
 Z = [0 dist dist dist ; 0 0 dist 0; 0 0 0 0 ; plan_spd plan_spd plan_spd plan_spd ];
 A.move(T(end) -1,T,U,Z);
 % spds(i) = spd;

@@ -1,8 +1,7 @@
-
 %4d system  tracking 2D rrt
 w_max = 2; % rad/s
 acc_max = 2;
-p1_limit = 0.6;
+p1_limit = 0.6;% planner max speed
 p2_limit = 0.6;
 %%
 % default to more grid points in x and y than in theta
@@ -16,7 +15,7 @@ p2_limit = 0.6;
 % if nargin < 2
     visualize = 1;
 
-   max_spd = 2;
+   max_spd = 2; %tracking max speed
 
 %% Grid and cost
 
@@ -65,22 +64,6 @@ end
 
 %% Dynamical system
 
-% tracker control bounds (rotational velocity)
-%k_1_bounds = [-1,1] %yaw rate bound
-  %yaw rate & acc
-% uMin = [-1, -1];
-% uMax = [1, 1];
-% 
-% % planner control bounds (velocity in x and y)
-% pMax = [.1, .1];
-% pMin = [-.1, -.1];
-% 
-% % disturbance control bounds (velocity in x and y)
-% dMax = [0; 0];
-% dMin = [0; 0];
-
-% create relative dynamics
-%P3D_Q2D_Rel(x, uMin, uMax, pMin, pMax, dMin, dMax, v, dims)
 sD.dynSys = Unicycle4DRelDubins([0, 0, 0,0],acc_max, w_max, p1_limit, p2_limit,max_spd);
 
 %% Otherparameters
@@ -88,7 +71,7 @@ sD.dynSys = Unicycle4DRelDubins([0, 0, 0,0],acc_max, w_max, p1_limit, p2_limit,m
 % tracker trying to minimize, disturbances (including planner) trying to
 % maximize
 sD.uMode = 'min';
-sD.dMode = 'max';
+sD.dMode = 'max'; 
 
 % how carefully are we measuring gradients?
 sD.accuracy = 'low';
@@ -279,7 +262,7 @@ planner_data.p1_limit  = p1_limit;
 planner_data.p2_limit = p2_limit;
 deriv = computeGradients(sD.grid,data);
 
-save(['Dubin4D2.0_0.6_40_high.mat'], 'TEB','sD', 'data','deriv','planner_data','-v7.3');
+save(['Dubin4D2.0_0.6_40_low.mat'], 'TEB','sD', 'data','deriv','planner_data','-v7.3');
 
 
 %%h0 = visSetIm(g3D, sqrt(data03D), 'blue', levels(1)+small);

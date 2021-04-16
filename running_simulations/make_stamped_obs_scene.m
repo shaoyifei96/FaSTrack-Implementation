@@ -9,7 +9,7 @@ if ~exist('TEB_data','var')
 else
     disp('TEB already loaded') ;
 end
-rng(100)
+rng(1045)
 % world
 obstacle_size_bounds = [0.2, 0.3] ; % side length [min, max]
 % N_wall_obstacles = 5 ;
@@ -45,8 +45,8 @@ A_FTK.LLCP.gains.acceleration = 1.8;
 A_FTK_avoid = fastrack_agent([]) ; % Use the same agent for avoid formulation as well.
 % Since most things are the same, except the limit is opposite, If value
 % function less than 1+footprint, it is too close to obstacles.
-A_FTK_avoid.LLC = fastrack_avoid_LLC(avoid_data);
-A_FTL_avoid.LLC.TEBadj = A_FTK_avoid.footprint;
+A_FTK_avoid.LLC = fastrack_avoid_LLC(avoid_data);%manually set a LLC since contructor doesn't set properly
+A_FTK_avoid.LLC.TEBadj = A_FTK_avoid.footprint;
 A_FTK_avoid.use_performance  =  "Avoid";
 % make agent cell array for simulator
 A = {A_FTK, A_FTK_avoid,A_RTD, A_RTD} ;
@@ -62,7 +62,7 @@ P_FTK = turtlebot_RRT_planner('verbose',verbose_level,'buffer',fastrack_buffer,.
 
 P_FTK_avoid = turtlebot_RRT_planner('verbose',verbose_level,'buffer',avoid_buffer,...
     't_plan',t_plan,'t_move',t_move,'desired_speed',desired_speed,...
-    'plot_HLP_flag',plot_HLP_flag) ;
+    'plot_HLP_flag',plot_HLP_flag,'lookahead_distance',2,'HLP_grow_tree_mode','new') ;
 
 % RTD planner
 P_RTD_1 = turtlebot_RTD_planner_static('verbose',verbose_level,'buffer',RTD_buffer,...

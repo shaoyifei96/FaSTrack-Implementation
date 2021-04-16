@@ -66,21 +66,15 @@ classdef fastrack_LLC < low_level_controller
 %              z_des=[1;-1];
              z_des=LLC.Q*[z_des(1); z_des(2)];
              
-             rel_z = z_cur - z_des;% find relative state SS
+             rel_z = z_cur - z_des;% Fastrack controller evaluate value function and gradient based on relative state
+             % get relative state here
              %rel_z=[0.5;0.1;0;0];
-             TEB_exp = sqrt((rel_z(1)^2+rel_z(2)^2));
+             TEB_exp = sqrt((rel_z(1)^2+rel_z(2)^2)); %evaluate value func
 %              TEB_exp = ; %make sure relative state doesn't exceed
              %teb, since we are choosing the next planned state, it can be
              %arbitarily close to the previous one to ensure our teb lookup
              %table doesn't go out of bound. SS
-%              if normalizer > 1
-%                  % Don't know if this intropolation is valid....
-%                  rel_z(1) = rel_z(1)/normalizer;
-%                  rel_z(2) = rel_z(2)/normalizer;
-%              end
-             %            [gOut, dataOut] = proj(LLC.TEB.sD.grid, LLC.TEB.data, [1 1 1 0], [rel_z(1) rel_z(2) rel_z(3)]);
-             %            figure(2)
-             %            plot(dataOut)
+%           
              % Interpolate b/w grid points, what we want is the controller,
              % so only the sign of deriv{3},{4} is necessary to compute the
              % controller, but we still get the value of all deriv, which is
@@ -91,31 +85,7 @@ classdef fastrack_LLC < low_level_controller
              % controller tries to minimize the rel err, only
              U = LLC.TEB.sD.dynSys.optCtrl([],rel_z,deriv_Intropolated,uMode);
              U= [U{1};U{2}];
-%              if abs (z_cur(4))>1
-%                  
-%                  %                 display("overspeed!");%z_cur(4),U(2))
-%                 
-%                 U(2)= -sign(z_cur(4))*2; %2 is the max or min acc
-%             end
-            
-            
-            %             rel_z
-            %             U
-            %             w_des = u_des(1) ;
-            %             a_des = u_des(2) ;
-            
-            % get gains
-            %             k_v = LLC.speed_gain ;
-            %             k_a = LLC.accel_gain ;
-            %             k_h = LLC.yaw_gain ;
-            %             k_w = LLC.yaw_rate_gain ;
-            %h= heading    v= velocity  a_des
-            % compute unsaturated inputs (they get saturated by the agent)
-            %             w_out = k_h*(h_des - h_cur) + k_w*w_des ;
-            %             a_out = k_v*(v_des - v_cur) + k_a*a_des ;
-            
-            % create output
-            %U = [w_out ; a_out] ;
+
         end
     end
 end
