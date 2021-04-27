@@ -99,13 +99,18 @@ classdef fastrack_agent < RTD_agent_2D
 %           make sure?
 
             normalizer = TEB_exp /A.LLC.TEBadj; %bad name but is the threshold, this is set automatically for fastrack LLC, can be manually set for avoid
+            
             u_p = A.LLCP.get_control_inputs(A,t,z,T,U,Z);
             
             if A.use_performance == "Fastrack"
                 u = ( normalizer> 0.8) * u_s + (normalizer<= 0.8)*(u_s * normalizer + u_p* (1-normalizer));
             elseif A.use_performance == "Avoid"
-                limit = 0.2;
-                u =( normalizer < limit) * (u_s * 0.5 + u_p* 0.5) + (normalizer>= limit)* u_p;
+                % limit = 0.05;
+                limit = 1;
+                
+                % u =( normalizer < limit) * (u_s * 0.5 + u_p* 0.5) + (normalizer>= limit)* u_p;
+                u =( normalizer < limit) * u_s + (normalizer>= limit)* u_p;                
+                % u =( TEB_exp < limit) * u_s + (TEB_exp >= limit)* u_p;                
                 %Sometimes crashes :(
             elseif A.use_performance == "OFF"
                 u = u_s ; % uncomment for safety only

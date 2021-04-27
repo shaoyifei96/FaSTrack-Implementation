@@ -5,7 +5,7 @@ desired_speed = 1 ; % m/s
 if ~exist('TEB_data','var')
     disp('Loading frs')
     TEB_data = load("Dubin4D2.0_0.3_40_vhigh_debugged.mat");
-    avoid_data = load("avoid_fun_box_data.mat");
+    avoid_data = load("avoid_fun_box_data_2.mat");
 else
     disp('TEB already loaded') ;
 end
@@ -40,7 +40,8 @@ A_RTD =  turtlebot_agent;
 A_FTK = fastrack_agent(TEB_data) ;
 A_FTK.use_performance = "Fastrack";
 A_FTK.LLC.TEBadj = 0.21; %Acoording to slides shared last meeting, with this loaded file. TEB limit is at 0.21m
-A_FTK.LLCP.gains.acceleration = 1.8;
+% A_FTK.LLCP.gains.acceleration = 1.8;
+
 % so if planner and dynamics gets too far away, use safety controller.
 A_FTK_avoid = fastrack_agent([]) ; % Use the same agent for avoid formulation as well.
 % Since most things are the same, except the limit is opposite, If value

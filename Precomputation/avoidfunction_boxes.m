@@ -42,6 +42,7 @@
 
 % if nargin < 1
 centers = {[-1,-2], [-0.5, -0.5], [2, 3], [1,0]}; %obstacle centers
+rec_length = 1;
 % end
 
 % if nargin <2
@@ -57,7 +58,8 @@ centers = {[-1,-2], [-0.5, -0.5], [2, 3], [1,0]}; %obstacle centers
 % Use "g = createGrid(grid_min, grid_max, N);" if there are no periodic
 % state space dimensions
 %% Simon's Grid
-gN = ones(4, 1)*40;
+% gN = ones(4, 1)*40;
+gN = [80, 80, 40, 40];
 % end
 pdDims = 3;               % 3rd dimension is periodic
 
@@ -68,8 +70,14 @@ pdDims = 3;               % 3rd dimension is periodic
    max_spd = 2;
 % grid bounds in x, y, theta (relative dynamics)
 
-grid_min = [-5; -5; -pi;  -max_spd; ]; %should be size of the state space
-grid_max = [5;  5 ;  pi;  max_spd; ];
+x_bounds = [-5, 5];
+y_bounds = [-5, 5];
+spd_bounds = [-2, 2];
+bound_add = 0.2;
+grid_min = [x_bounds(1)-bound_add; y_bounds(1)-bound_add;
+    -pi;  -max_spd-bound_add]; %should be size of the state space
+grid_max = [x_bounds(2)+bound_add;  y_bounds(2)+bound_add;
+    pi;  max_spd+bound_add];
 
 % create grid with 3rd dimension periodic
 g = createGrid(grid_min, grid_max, gN,pdDims);
@@ -77,9 +85,10 @@ g = createGrid(grid_min, grid_max, gN,pdDims);
 %% target set
 
 % data0 = shapeCylinder(g, 3, [centers{1},0], radius);
-data0 = shapeRectangleByCenter(g, [centers{1},0, 0], [1 1 pi*2 max_spd*2]);%size of rectangle is big
-for ii = 2:length(centers)
-   newobs = shapeRectangleByCenter(g, [centers{ii},0,0], [1 1 pi*2 max_spd*2]);
+% data0 = shapeRectangleByCenter(g, [centers{1},0, 0], [1 1 pi*2 max_spd*2]);%size of rectangle is big
+data0 = -shapeRectangleByCorners(g, [x_bounds(1), y_bounds(1), -inf, -max_spd], [x_bounds(2), y_bounds(2), inf, max_spd]);
+for ii = 1:length(centers)
+   newobs = shapeRectangleByCenter(g, [centers{ii},0,0], [rec_length, rec_length, inf inf]);
    data0 = shapeUnion(data0,newobs);
 end
 
@@ -87,6 +96,7 @@ end
 %% time vector
 t0 = 0;
 tMax = 10;
+% tMax = 1;
 dt = 0.05;
 tau = t0:dt:tMax;
 
@@ -141,5 +151,5 @@ HJIextraArgs.visualize.viewAxis = ...
 Value = Value(:,:,:,:,end);
 Deriv = computeGradients(g, Value);
 %%
-save('avoid_fun_box_data.mat','Value','Deriv','schemeData')
+save('avoid_fun_box_data_2.mat','Value','Deriv','schemeData')
 % end
