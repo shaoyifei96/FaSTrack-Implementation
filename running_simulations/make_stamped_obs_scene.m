@@ -63,7 +63,11 @@ P_FTK = turtlebot_RRT_planner('verbose',verbose_level,'buffer',fastrack_buffer,.
 
 P_FTK_avoid = turtlebot_RRT_planner('verbose',verbose_level,'buffer',avoid_buffer,...
     't_plan',t_plan,'t_move',t_move,'desired_speed',desired_speed,...
-    'plot_HLP_flag',plot_HLP_flag,'lookahead_distance',2,'HLP_grow_tree_mode','new') ;
+    'plot_HLP_flag',plot_HLP_flag, 'HLP_grow_tree_mode', 'new') ;
+
+% P_FTK_avoid = turtlebot_RRT_planner('verbose',verbose_level,'buffer',avoid_buffer,...
+%     't_plan',t_plan,'t_move',t_move,'desired_speed',desired_speed,...
+%     'plot_HLP_flag',plot_HLP_flag,'lookahead_distance',2,'HLP_grow_tree_mode','new') ;
 
 % RTD planner
 P_RTD_1 = turtlebot_RTD_planner_static('verbose',verbose_level,'buffer',RTD_buffer,...
@@ -77,12 +81,13 @@ P_RTD_2 = turtlebot_RTD_planner_static('verbose',verbose_level,'buffer',RTD_buff
 
 % make planner input
 P = {P_FTK, P_FTK_avoid, P_RTD_1, P_RTD_2} ;
+% P = {P_RTD_2, P_RTD_2, P_RTD_2, P_RTD_2} ;
 
 %% make world
 W = static_box_world('bounds',bounds,'N_obstacles',0,...
     'verbose',verbose_level,'goal_radius',goal_radius,...
     'obstacle_size_bounds',obstacle_size_bounds,...
-    'buffer',fastrack_buffer,'start',start,'goal',goal) ;
+    'buffer',avoid_buffer,'start',start,'goal',goal) ;
 
 % get goal and y bounds
 g = W.goal ;
@@ -108,9 +113,10 @@ W.N_obstacles = 4;
 % W.N_obstacles = N_wall_obstacles ;
 W.setup() ;
 
+
 %% run FTK simulation
 S = simulator(A,W,P,'allow_replan_errors',false,'verbose',verbose_level,...
-    'max_sim_time',30,'max_sim_iterations',1000,'plot_while_running',1) ;
+    'max_sim_time',150,'max_sim_iterations',1000,'plot_while_running',1) ;
 
 S.run(2) %1. fastrack, 2. stamped HJB, 3. RTD RRT. 4. RTD straightline
 

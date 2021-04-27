@@ -109,7 +109,9 @@ classdef fastrack_agent < RTD_agent_2D
                 limit = 1;
                 
                 % u =( normalizer < limit) * (u_s * 0.5 + u_p* 0.5) + (normalizer>= limit)* u_p;
-                u =( normalizer < limit) * u_s + (normalizer>= limit)* u_p;                
+                gap = 1;
+                u =( normalizer < limit) * u_s + (normalizer>= limit+gap)* u_p ...
+                    + (normalizer < limit+gap && normalizer >= limit) * (u_p * (normalizer-limit) + u_s * (limit+gap-normalizer))/gap;                
                 % u =( TEB_exp < limit) * u_s + (TEB_exp >= limit)* u_p;                
                 %Sometimes crashes :(
             elseif A.use_performance == "OFF"
