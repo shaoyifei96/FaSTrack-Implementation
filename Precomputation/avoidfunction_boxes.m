@@ -59,7 +59,7 @@ rec_length = 1;
 % state space dimensions
 %% Simon's Grid
 % gN = ones(4, 1)*40;
-gN = [80, 80, 40, 40];
+gN = [85, 85, 40, 37];
 % end
 pdDims = 3;               % 3rd dimension is periodic
 
@@ -73,7 +73,7 @@ pdDims = 3;               % 3rd dimension is periodic
 x_bounds = [-5, 5];
 y_bounds = [-5, 5];
 spd_bounds = [-2, 2];
-bound_add = 0.2;
+bound_add = 0.25;
 grid_min = [x_bounds(1)-bound_add; y_bounds(1)-bound_add;
     -pi;  -max_spd-bound_add]; %should be size of the state space
 grid_max = [x_bounds(2)+bound_add;  y_bounds(2)+bound_add;
@@ -86,7 +86,7 @@ g = createGrid(grid_min, grid_max, gN,pdDims);
 
 % data0 = shapeCylinder(g, 3, [centers{1},0], radius);
 % data0 = shapeRectangleByCenter(g, [centers{1},0, 0], [1 1 pi*2 max_spd*2]);%size of rectangle is big
-data0 = -shapeRectangleByCorners(g, [x_bounds(1), y_bounds(1), -inf, -max_spd], [x_bounds(2), y_bounds(2), inf, max_spd]);
+data0 = -shapeRectangleByCorners(g, [x_bounds(1), y_bounds(1), -inf, -inf], [x_bounds(2), y_bounds(2), inf, inf]);
 for ii = 1:length(centers)
    newobs = shapeRectangleByCenter(g, [centers{ii},0,0], [rec_length, rec_length, inf inf]);
    data0 = shapeUnion(data0,newobs);
@@ -127,8 +127,9 @@ uMode = 'max';
 % Put grid and dynamic systems into schemeData
 schemeData.grid = g;
 schemeData.dynSys = dCar;
-schemeData.accuracy = 'high'; %set accuracy
+schemeData.accuracy = 'medium'; %set accuracy
 schemeData.uMode = uMode;
+HJIextraArgs.targetFunction = data0;
 
 %% Visualization
 
@@ -147,7 +148,7 @@ HJIextraArgs.visualize.viewAxis = ...
 %[data, tau, extraOuts] = ...
 % HJIPDE_solve(data0, tau, schemeData, minWith, extraArgs)
 [Value, tau2, ~] = ...
-  HJIPDE_solve(data0, tau, schemeData, 'minVOverTime', HJIextraArgs);
+  HJIPDE_solve(data0, tau, schemeData, 'minVWithL', HJIextraArgs);
 Value = Value(:,:,:,:,end);
 Deriv = computeGradients(g, Value);
 %%
