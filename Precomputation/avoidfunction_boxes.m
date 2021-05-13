@@ -39,10 +39,17 @@
 %   Value           - (matrix) value function defined over that grid.
 %   Deriv           - (cell) spatial gradients of the value function 
 %                       defined over that grid.
-
+clear
+for i = 1:20
 % if nargin < 1
-centers = {[-1,-2], [-0.5, -0.5], [2, 3], [1,0]}; %obstacle centers
+rng(i);
+centers = cell(0);
+for obs_idx = 1:4
+    rx = -3 + (5-3).*rand(1,2);
+    centers{end+1} = [rx]; %obstacle centers
+end
 rec_length = 1;
+
 % end
 
 % if nargin <2
@@ -59,7 +66,7 @@ rec_length = 1;
 % state space dimensions
 %% Simon's Grid
 % gN = ones(4, 1)*40;
-gN = [85, 85, 40, 37];
+gN = [80, 80, 40, 37];
 % end
 pdDims = 3;               % 3rd dimension is periodic
 
@@ -152,5 +159,6 @@ HJIextraArgs.visualize.viewAxis = ...
 Value = Value(:,:,:,:,end);
 Deriv = computeGradients(g, Value);
 %%
-save('avoid_fun_box_data_2.mat','Value','Deriv','schemeData')
+save("avoid_fun_box_data_"+num2str(i)+".mat",'Value','Deriv','schemeData')
+end
 % end

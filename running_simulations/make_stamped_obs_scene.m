@@ -5,7 +5,7 @@ desired_speed = 1 ; % m/s
 if ~exist('TEB_data','var')
     disp('Loading frs')
     TEB_data = load("Dubin4D2.0_0.3_40_vhigh_debugged.mat");
-    avoid_data = load("avoid_fun_box_data_2.mat");
+    avoid_data = load("avoid_fun_box_data_2_Jason.mat");
 else
     disp('TEB already loaded') ;
 end
@@ -49,6 +49,8 @@ A_FTK_avoid = fastrack_agent([]) ; % Use the same agent for avoid formulation as
 A_FTK_avoid.LLC = fastrack_avoid_LLC(avoid_data);%manually set a LLC since contructor doesn't set properly
 A_FTK_avoid.LLC.TEBadj = A_FTK_avoid.footprint;
 A_FTK_avoid.use_performance  =  "Avoid";
+% A_FTK_avoid.use_performance  =  "Performance";
+% A_FTK_avoid.integrator_type  = 'ode45';
 % make agent cell array for simulator
 A = {A_FTK, A_FTK_avoid,A_RTD, A_RTD} ;
 

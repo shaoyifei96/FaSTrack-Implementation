@@ -19,7 +19,7 @@ classdef fastrack_agent < RTD_agent_2D
         ending_state = NaN;
         SIGKILL = 0;
         use_performance = "Fastrack"; %flag for mode 1 or 2
-        
+        W; % world pointer for help
     end
     
     methods
@@ -30,7 +30,7 @@ classdef fastrack_agent < RTD_agent_2D
             n_states = 4 ;
             n_inputs = 2 ;
             stopping_time = 1 ;
-            sensor_radius = 1000 ;
+            sensor_radius = 5*sqrt(2) ;
             LLC =  fastrack_LLC(TEB);
             LLCP = turtlebot_PD_LLC ;
             
@@ -89,8 +89,10 @@ classdef fastrack_agent < RTD_agent_2D
             h = z(A.heading_index) ;
             v = z(A.speed_index) ;
             
+            if A.use_performance ~= "Performance"
             % get nominal control inputs
             [u_s, TEB_exp] = A.LLC.get_control_inputs(A,t,z,T,U,Z);
+            
             %safety controller and value function
 %           in fastrack, normalizer always < 1, if close to 1 , then use
 %           safety controller.
@@ -99,6 +101,7 @@ classdef fastrack_agent < RTD_agent_2D
 %           make sure?
 
             normalizer = TEB_exp /A.LLC.TEBadj; %bad name but is the threshold, this is set automatically for fastrack LLC, can be manually set for avoid
+            end
             
             u_p = A.LLCP.get_control_inputs(A,t,z,T,U,Z);
 %             disp(u_p)
@@ -113,12 +116,14 @@ classdef fastrack_agent < RTD_agent_2D
                 gap = 2;
                 u =( normalizer < limit) * u_s + (normalizer>= limit+gap)* u_p ...
                     + (normalizer < limit+gap && normalizer >= limit) * (u_p * (normalizer-limit) + u_s * (limit+gap-normalizer))/gap;                
-                fprintf("TEB_exp: %.2f \t norm: %.2f \t u_s: %.2f %.2f\t u_p: %.2f %.2f, \t u: %.2f %2.f\n", ...
-                    [TEB_exp, normalizer, u_s(1), u_s(2), u_p(1), u_p(2), u(1), u(2)]);
+%                 fprintf("TEB_exp: %.2f \t norm: %.2f \t u_s: %.2f %.2f\t u_p: %.2f %.2f, \t u: %.2f %2.f\n", ...
+%                     [TEB_exp, normalizer, u_s(1), u_s(2), u_p(1), u_p(2), u(1), u(2)]);
                 % u =( TEB_exp < limit) * u_s + (TEB_exp >= limit)* u_p;                
                 %Sometimes crashes :(
             elseif A.use_performance == "OFF"
                 u = u_s ; % uncomment for safety only
+            elseif A.use_performance == "Performance"
+                u = u_p;
             else
                 error("Unrecognized use_performance flag");
             end
