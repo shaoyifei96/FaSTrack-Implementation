@@ -18,7 +18,7 @@ classdef fastrack_agent < RTD_agent_2D
 %         TEB_max = 0;
         ending_state = NaN;
         SIGKILL = 0;
-        use_performance = "Fastrack"; %flag for mode 1 or 2
+        use_performance; %flag for mode 1 or 2
         W; % world pointer for help
     end
     
